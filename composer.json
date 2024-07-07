@@ -1,0 +1,22 @@
+{
+	"require" : {
+		"amphp/http-server" : "^3.3",
+		"amphp/log" : "^2.0",
+		"amphp/http-client" : "^5.1",
+		"kelunik/oauth" : "dev-master",
+		"symfony/dependency-injection" : "^6.4",
+		"symfony/config" : "^6.4",
+		"symfony/yaml" : "^6.4",
+		"amphp/http-server-router" : "^2.0",
+		"symfony/dotenv" : "^6.4",
+		"amphp/byte-stream" : "^2.1"
+	},
+	"autoload" : {
+		"psr-4" : {
+			"App\\" : "./src"
+		},
+		"files": [
+			"src/functions.php"
+		]
+	}
+}
