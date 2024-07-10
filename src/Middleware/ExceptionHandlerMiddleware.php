@@ -7,6 +7,9 @@ use Amp\Http\Server\RequestHandler;
 use Amp\Http\Server\Response;
 use Amp\Http\Server\ErrorHandler;
 
+/**
+ * Error page with exception message
+ */
 class ExceptionHandlerMiddleware implements Middleware
 {
     

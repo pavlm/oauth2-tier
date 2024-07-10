@@ -1,5 +1,9 @@
+imports:
+    - { resource: providers.yaml }
+
 parameters:
     env(OA2T_HTTP_ADDRESS): 0.0.0.0:8088
+    env(OA2T_HTTP_ROOT_URL): http://0.0.0.0:8088/
     env(OA2T_UPSTREAM): http://127.0.0.0:80/
     env(OA2T_EMAIL_DOMAINS): '*'
     env(OA2T_COOKIE_SECRET): b1677dfde85309b4b99e72bc4f547442
@@ -13,7 +17,8 @@ services:
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
-#        bind:
+        bind:
+#            Amp\Http\Client\HttpClient: '@Amp\Http\Client\HttpClient'
 #            Psr\Log\LoggerInterface: '@logger'
 
 #    logger:
@@ -46,6 +51,7 @@ services:
         public: true
         properties:
             httpAddress: '%env(OA2T_HTTP_ADDRESS)%'
+            httpRootUrl: '%env(OA2T_HTTP_ROOT_URL)%'
             upstream: '%env(OA2T_UPSTREAM)%'
             emailDomains: '%env(OA2T_EMAIL_DOMAINS)%'
             cookieSecret: '%env(OA2T_COOKIE_SECRET)%'
@@ -53,23 +59,6 @@ services:
             cookieExpire: '%env(OA2T_COOKIE_EXPIRE)%'
             providers: '%env(json:OA2T_PROVIDERS)%'
 #            providers: '%env(graph:OA2T_PROVIDERS)%'
-
-    google:
-        public: true
-        class: App\OAuth\Providers\GenericProvider
-        arguments:
-            $clientId: '%env(OA2T_PROVIDERS_GOOGLE_CLIENT_ID)%'
-            $clientSecret: '%env(OA2T_PROVIDERS_GOOGLE_CLIENT_SECRET)%'
-            $redirectUri: /oauth/callback/google
-            $name: 'Google'
-
-    yandex:
-        public: true
-        class: App\OAuth\Providers\YandexProvider
-        arguments:
-            $clientId: '%env(OA2T_PROVIDERS_YANDEX_CLIENT_ID)%'
-            $clientSecret: '%env(OA2T_PROVIDERS_YANDEX_CLIENT_SECRET)%'
-            $redirectUri: /oauth/callback/yandex
             
     App\Application:
         class: App\Application

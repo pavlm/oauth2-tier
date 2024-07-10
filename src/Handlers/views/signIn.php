@@ -10,7 +10,7 @@ use Kelunik\OAuth\Provider;
     <title><?= $title ?? 'OAuth2 tier' ?></title>
     <style>
     <?php require '_css.php'; ?>
-      main {
+      form {
         display: flex;
         flex-direction: column;
         padding: 0 1em;
@@ -22,12 +22,12 @@ use Kelunik\OAuth\Provider;
         <header>
             <h1><?= $title ?? 'OAuth2 tier' ?></h1>
         </header>
-        <main>
+        <form action="/oauth2/start" method="post">
         	<p>Login with these providers</p>
         	<?php foreach ($providers as $provider): ?>
-            <button type="button" onclick="window.location.reload()" style="margin-bottom: 0em"><?= $provider->getName() ?></button>
+            <button type="submit" style="margin-bottom: 0em" name="provider" value="<?= $provider->getInternalName() ?>"><?= $provider->getName() ?></button>
             <?php endforeach; ?>
-        </main>
+        </form>
     </div>
 </body>
 </html>

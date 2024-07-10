@@ -1,20 +1,13 @@
 <?php
 namespace App\OAuth;
 
-use App\OAuth\Providers\YandexProvider;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use App\Config;
-use App\OAuth\Providers\KeycloakProvider;
 use Kelunik\OAuth\Provider;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 class ProviderRegistry
 {
-    
-    const PROVIDERS = [
-        'yandex' => YandexProvider::class,
-        'keycloak' => KeycloakProvider::class,
-    ];
     
     public function __construct(
         private Config $config,

@@ -46,10 +46,10 @@ class Application
         $server = SocketHttpServer::createForDirectAccess($logger);
         $exceptionMiddleware = new ExceptionHandlerMiddleware($errorHandler);
         $router = new Router($server, $logger, $errorHandler);
-        //$router->addMiddleware($exceptionMiddleware);
+        $router->addMiddleware($exceptionMiddleware);
         $router->addRoute('GET', '/ping', $this->container->get(PingRequestHandler::class));
         $router->addRoute('GET', '/oauth2/sign_in', $this->container->get(SignInRequestHandler::class));
-        $router->addRoute('GET', '/oauth2/start/{provider}', $this->container->get(StartRequestHandler::class));
+        $router->addRoute('POST', '/oauth2/start', $this->container->get(StartRequestHandler::class));
         $router->addRoute('GET', '/oauth2/callback/{provider}', $this->container->get(CallbackRequestHandler::class));
         $router->setFallback($this->container->get(ProxyHandler::class));
         

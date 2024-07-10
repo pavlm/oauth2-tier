@@ -19,15 +19,20 @@ class StartRequestHandler implements RequestHandler
     
     public function handleRequest(Request $request): Response
     {
-        $args = $request->getAttribute(Router::class);
-        $providerId = $args['provider'];
-        if (!$provider = $this->registry->getByName($providerId)) {
+        $body = $request->getBody()->buffer(null, 512);
+        //fwrite(fopen('php://stderr', 'w'), $body);
+        parse_str($body, $form);
+
+        $providerId = $form['provider'] ?? null;
+        if (!$providerId || !$provider = $this->registry->getByName($providerId)) {
             throw new HttpErrorException(400, 'Provider not found');
         }
         
-        //$provider->getAuthorizationUrl($state)
+        $url = $provider->getAuthorizationUrl('');
         
-        return new Response(200, [], "ok\n");
+        return new Response(302, [
+            'location' => $url,
+        ]);
     }
     
 }

@@ -1,0 +1,41 @@
+
+parameters:
+    empty: ''
+    scopes: '["profile", "email"]'
+
+services:
+
+    keycloak:
+        public: true
+        class: App\OAuth\Providers\GenericProvider
+        arguments:
+            $nameId: 'keycloak'
+            $name: 'Keycloak'
+            $httpClient: '@Amp\Http\Client\HttpClient'
+            $redirectUri: '%env(OA2T_HTTP_ROOT_URL)%oauth2/callback/keycloak'
+            $authorizationUrl: '%env(default:empty:OA2T_PROVIDERS_KEYCLOAK_AUTHORIZATION_URL)%'
+            $accessTokenUrl: '%env(default:empty:OA2T_PROVIDERS_KEYCLOAK_ACCESS_TOKEN_URL)%'
+            $clientId: '%env(default:empty:OA2T_PROVIDERS_KEYCLOAK_CLIENT_ID)%'
+            $clientSecret: '%env(default:empty:OA2T_PROVIDERS_KEYCLOAK_CLIENT_SECRET)%'
+            $scopes: '%env(json:default:scopes:OA2T_PROVIDERS_KEYCLOAK_SCOPES)%'
+
+    google:
+        public: true
+        class: App\OAuth\Providers\GenericProvider
+        arguments:
+            $httpClient: '@Amp\Http\Client\HttpClient'
+            $redirectUri: '%env(OA2T_HTTP_ROOT_URL)%oauth2/callback/google'
+            $authorizationUrl: ''
+            $accessTokenUrl: ''
+            $clientId: '%env(default:empty:OA2T_PROVIDERS_GOOGLE_CLIENT_ID)%'
+            $clientSecret: '%env(default:empty:OA2T_PROVIDERS_GOOGLE_CLIENT_SECRET)%'
+            $name: 'Google'
+
+    yandex:
+        public: true
+        class: App\OAuth\Providers\YandexProvider
+        arguments:
+            $httpClient: '@Amp\Http\Client\HttpClient'
+            $redirectUri: '%env(OA2T_HTTP_ROOT_URL)%oauth2/callback/yandex'
+            $clientId: '%env(default:empty:OA2T_PROVIDERS_YANDEX_CLIENT_ID)%'
+            $clientSecret: '%env(default:empty:OA2T_PROVIDERS_YANDEX_CLIENT_SECRET)%'

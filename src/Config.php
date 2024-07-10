@@ -6,6 +6,8 @@ class Config
     
     public string $httpAddress = '0.0.0.0:8088';
     
+    public string $httpRootUrl = 'http://0.0.0.0:8088/';
+    
     public string $upstream = 'http://127.0.0.1:80';
     
     public string $emailDomains = '*';
