@@ -6,6 +6,8 @@ use Amp\Http\Server\RequestHandler;
 use Amp\Http\Server\Response;
 use App\OAuth\ProviderRegistry;
 use function App\renderPhp;
+use Amp\Http\Server\Session\Session;
+use App\Middleware\AuthMiddleware;
 
 class SignInRequestHandler implements RequestHandler
 {
@@ -18,11 +20,11 @@ class SignInRequestHandler implements RequestHandler
     
     public function handleRequest(Request $request): Response
     {
-        //$html = file_get_contents(__DIR__ . '/views/page.html');
-        
         $providers = $this->registry->getList();
 
-        $html = renderPhp(__DIR__ . '/views/signIn.php', ['providers' => $providers]);
+        $user = AuthMiddleware::getRequestUser($request);
+
+        $html = renderPhp(__DIR__ . '/views/signIn.php', ['providers' => $providers, 'user' => $user]);
         
         return new Response(200, [
             "content-type" => "text/html; charset=utf-8"

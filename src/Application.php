@@ -16,6 +16,10 @@ use App\Handlers\CallbackRequestHandler;
 use App\Handlers\StartRequestHandler;
 use App\Handlers\ProxyHandler;
 use App\Middleware\ExceptionHandlerMiddleware;
+use Amp\Http\Server\Session\SessionMiddleware;
+use Amp\Http\Cookie\CookieAttributes;
+use App\Middleware\AuthMiddleware;
+use function Amp\Http\Server\Middleware\stackMiddleware;
 
 class Application
 {
@@ -37,6 +41,7 @@ class Application
         $logger = new Logger('server');
         $logger->pushHandler($logHandler);
         $logger->info('starting...');
+        $this->container->set('logger', $logger);
         
         print_r($this->config);
         var_export($_ENV);
@@ -46,18 +51,23 @@ class Application
         $server = SocketHttpServer::createForDirectAccess($logger);
         $exceptionMiddleware = new ExceptionHandlerMiddleware($errorHandler);
         $router = new Router($server, $logger, $errorHandler);
-        $router->addMiddleware($exceptionMiddleware);
+        $middlewares = [
+            $exceptionMiddleware,
+            new SessionMiddleware(cookieAttributes: $this->container->get(CookieAttributes::class)),
+            new AuthMiddleware($logger),
+        ];
+        array_map($router->addMiddleware(...), $middlewares);
         $router->addRoute('GET', '/ping', $this->container->get(PingRequestHandler::class));
         $router->addRoute('GET', '/oauth2/sign_in', $this->container->get(SignInRequestHandler::class));
         $router->addRoute('POST', '/oauth2/start', $this->container->get(StartRequestHandler::class));
         $router->addRoute('GET', '/oauth2/callback/{provider}', $this->container->get(CallbackRequestHandler::class));
-        $router->setFallback($this->container->get(ProxyHandler::class));
         
-        //$router->setFallback($requestHandler)
+        $proxyHandler = $this->container->get(ProxyHandler::class);
+        $router->setFallback(stackMiddleware($proxyHandler, ...$middlewares));
+        
         $server->expose($this->config->httpAddress);
         $server->start($router, $errorHandler);
         
-        // Serve requests until SIGINT or SIGTERM is received by the process.
         \Amp\trapSignal([
             SIGINT,
             SIGTERM

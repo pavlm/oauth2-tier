@@ -15,21 +15,30 @@ services:
             $redirectUri: '%env(OA2T_HTTP_ROOT_URL)%oauth2/callback/keycloak'
             $authorizationUrl: '%env(default:empty:OA2T_PROVIDERS_KEYCLOAK_AUTHORIZATION_URL)%'
             $accessTokenUrl: '%env(default:empty:OA2T_PROVIDERS_KEYCLOAK_ACCESS_TOKEN_URL)%'
+            $userInfoUrl: '%env(default:empty:OA2T_PROVIDERS_KEYCLOAK_USER_INFO_URL)%'
             $clientId: '%env(default:empty:OA2T_PROVIDERS_KEYCLOAK_CLIENT_ID)%'
             $clientSecret: '%env(default:empty:OA2T_PROVIDERS_KEYCLOAK_CLIENT_SECRET)%'
             $scopes: '%env(json:default:scopes:OA2T_PROVIDERS_KEYCLOAK_SCOPES)%'
+            $loader: !service
+                class: 'App\OAuth\IdentityLoader'
+                arguments:
+                    $idPointer: '/sub'
+                    $namePointer: '/name'
+                    $avatarPointer: '/avatar'
+                    $emailPointer: '/email'
 
-    google:
-        public: true
-        class: App\OAuth\Providers\GenericProvider
-        arguments:
-            $httpClient: '@Amp\Http\Client\HttpClient'
-            $redirectUri: '%env(OA2T_HTTP_ROOT_URL)%oauth2/callback/google'
-            $authorizationUrl: ''
-            $accessTokenUrl: ''
-            $clientId: '%env(default:empty:OA2T_PROVIDERS_GOOGLE_CLIENT_ID)%'
-            $clientSecret: '%env(default:empty:OA2T_PROVIDERS_GOOGLE_CLIENT_SECRET)%'
-            $name: 'Google'
+
+#    google:
+#        public: true
+#        class: App\OAuth\Providers\GenericProvider
+#        arguments:
+#            $httpClient: '@Amp\Http\Client\HttpClient'
+#            $redirectUri: '%env(OA2T_HTTP_ROOT_URL)%oauth2/callback/google'
+#            $authorizationUrl: ''
+#            $accessTokenUrl: ''
+#            $clientId: '%env(default:empty:OA2T_PROVIDERS_GOOGLE_CLIENT_ID)%'
+#            $clientSecret: '%env(default:empty:OA2T_PROVIDERS_GOOGLE_CLIENT_SECRET)%'
+#            $name: 'Google'
 
     yandex:
         public: true
