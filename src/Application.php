@@ -9,7 +9,6 @@ use Amp\Http\Server\DefaultErrorHandler;
 use Amp\Http\Server\SocketHttpServer;
 use Amp\Http\Server\Router;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use App\Handlers\PingRequestHandler;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use App\Handlers\SignInRequestHandler;
 use App\Handlers\CallbackRequestHandler;
@@ -20,6 +19,7 @@ use Amp\Http\Server\Session\SessionMiddleware;
 use Amp\Http\Cookie\CookieAttributes;
 use App\Middleware\AuthMiddleware;
 use function Amp\Http\Server\Middleware\stackMiddleware;
+use App\Handlers\StaticRequestHandler;
 
 class Application
 {
@@ -57,7 +57,7 @@ class Application
             new AuthMiddleware($logger),
         ];
         array_map($router->addMiddleware(...), $middlewares);
-        $router->addRoute('GET', '/ping', $this->container->get(PingRequestHandler::class));
+        $router->addRoute('GET', '/ping', new StaticRequestHandler('pong'));
         $router->addRoute('GET', '/oauth2/sign_in', $this->container->get(SignInRequestHandler::class));
         $router->addRoute('POST', '/oauth2/start', $this->container->get(StartRequestHandler::class));
         $router->addRoute('GET', '/oauth2/callback/{provider}', $this->container->get(CallbackRequestHandler::class));
