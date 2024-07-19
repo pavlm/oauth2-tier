@@ -1,6 +1,8 @@
 <?php
 namespace App;
 
+use Amp\Http\Server\Response;
+
 function renderPhp($file, $data = []): string
 {
     ob_start();
@@ -24,4 +26,11 @@ function getViaPointer($data, array|string $jsonPointer, mixed $default = null):
     }
     $value = $data[$prop] ?? $default;
     return empty($parts) ? $value : getViaPointer($value, $parts, $default);
+}
+
+function responseWithRedirect(string $location, int $status = 302)
+{
+    return new Response($status, [
+        'location' => $location,
+    ]);
 }

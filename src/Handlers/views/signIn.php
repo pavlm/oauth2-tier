@@ -12,10 +12,13 @@ use App\OAuth\IdentityData;
     <title><?= $title ?? 'OAuth2 tier (proxy)' ?></title>
     <style>
     <?php require '_css.php'; ?>
-      form {
-        display: flex;
+      form.start {
         flex-direction: column;
-        padding: 0 1em;
+      }
+      
+      form.logout {
+        align-items: center;
+        justify-content: space-between;
       }
     </style>
 </head>
@@ -24,14 +27,19 @@ use App\OAuth\IdentityData;
         <header>
             <h1><?= $title ?? 'OAuth2 tier (proxy)' ?></h1>
         </header>
-        <form action="/oauth2/start" method="post">
+        <form action="/oauth2/start" method="post" class="d-flex start">
         	<p>Login with these providers</p>
         	<?php foreach ($providers as $provider): ?>
-            <button type="submit" style="margin-bottom: 0em" name="provider" value="<?= $provider->getInternalName() ?>"><?= $provider->getName() ?></button>
+            <button type="submit" name="provider" value="<?= $provider->getInternalName() ?>" class="mb-3"><?= $provider->getName() ?></button>
             <?php endforeach; ?>
         </form>
         <?php if ($user): ?>
-        <pre>🔓<?= var_export($user, true) ?></pre>
+            <form action="/oauth2/sign_out" method="post" class="d-flex logout">
+            	<div class="mr-3">
+            	    👤 <?= $user->getName() ?: $user->getEmail() ?: $user->getId() ?>
+            	</div>
+            	<button type="submit">logout</button>
+            </form>
         <?php endif; ?>
     </div>
 </body>

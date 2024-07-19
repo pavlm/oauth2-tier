@@ -20,6 +20,7 @@ use Amp\Http\Cookie\CookieAttributes;
 use App\Middleware\AuthMiddleware;
 use function Amp\Http\Server\Middleware\stackMiddleware;
 use App\Handlers\StaticRequestHandler;
+use App\Handlers\SignOutRequestHandler;
 
 class Application
 {
@@ -59,6 +60,7 @@ class Application
         array_map($router->addMiddleware(...), $middlewares);
         $router->addRoute('GET', '/ping', new StaticRequestHandler('pong'));
         $router->addRoute('GET', '/oauth2/sign_in', $this->container->get(SignInRequestHandler::class));
+        $router->addRoute('POST', '/oauth2/sign_out', $this->container->get(SignOutRequestHandler::class));
         $router->addRoute('POST', '/oauth2/start', $this->container->get(StartRequestHandler::class));
         $router->addRoute('GET', '/oauth2/callback/{provider}', $this->container->get(CallbackRequestHandler::class));
         

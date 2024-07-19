@@ -1,3 +1,10 @@
+body {
+  --primary-color: #48e;
+  --gap-1: 0.1em;
+  --gap-2: 0.2em;
+  --gap-3: 0.5em;
+}
+
 body, html {
     margin: 0;
     padding: 0;
@@ -44,14 +51,12 @@ li::before {
 
 button {
     box-sizing: content-box;
-    width: 100%;
     display: block;
-    background: #48e;
+    background: var(--primary-color);
     color: #fff;
     border-radius: 0 0 2px 2px;
     border: 0;
     padding: 15px 30px;
-    margin: 20px -30px -20px -30px;
     font-weight: bold;
     font-family: monospace;
     box-shadow: 0 2px 4px rgba(0,0,0,.2) inset;
@@ -76,4 +81,28 @@ button:active {
     box-shadow: 0 0 6px rgba(0,0,0,.3) inset;
     border: 0;
     padding: 15px 30px;
+}
+
+.d-flex {
+    display: flex;
+}
+
+.mb-1 {
+    margin-bottom: var(--gap-1);
+}
+.mb-2 {
+    margin-bottom: var(--gap-2);
+}
+.mb-3 {
+    margin-bottom: var(--gap-3);
+}
+
+.mr-1 {
+    margin-right: var(--gap-1);
+}
+.mr-2 {
+    margin-right: var(--gap-2);
+}
+.mr-3 {
+    margin-right: var(--gap-3);
 }
