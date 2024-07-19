@@ -15,6 +15,7 @@ parameters:
 services:
     # default configuration for services in *this* file
     _defaults:
+        public: true
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
         bind:
@@ -24,31 +25,19 @@ services:
     logger:
         synthetic: true
 
-    # makes classes in src/ available to be used as services
-    # this creates a service per class whose id is the fully-qualified class name
-#    App\Services\:
-#        resource: '../src/Services/*'
-#        exclude: '../src/Services/{DependencyInjection,Entity,Tests,Kernel.php}'
-#        public: true
-#
-
     App\Handlers\:
         resource: '../src/Handlers/*'
         exclude: '../src/Handlers/views'
-        public: true
 
     App\OAuth\:
         resource: '../src/OAuth/*'
         exclude: '../src/OAuth/Providers'
-        public: true
 
     App\Symfony\:
         resource: '../src/Symfony/*'
-        public: true
 
     App\Config:
         class: App\Config
-        public: true
         properties:
             httpAddress: '%env(OA2T_HTTP_ADDRESS)%'
             httpRootUrl: '%env(OA2T_HTTP_ROOT_URL)%'
@@ -62,7 +51,9 @@ services:
             
     App\Application:
         class: App\Application
-        public: true
+            
+    App\AccessControl:
+        class: App\AccessControl
 
     App\OAuth\Identity:
         class: App\OAuth\Identity
@@ -74,7 +65,6 @@ services:
 
     Amp\Http\Client\HttpClientBuilder:
         class: Amp\Http\Client\HttpClientBuilder
-        public: true
         calls:
           - retry: !returns_clone [0]
           - skipDefaultUserAgent: !returns_clone []
@@ -98,13 +88,13 @@ services:
 
     Amp\Http\Client\HttpClient:
         class: Amp\Http\Client\HttpClient
-        public: true
         factory: [ '@Amp\Http\Client\HttpClientBuilder', 'build' ]
         
     Amp\Http\Cookie\CookieAttributes:
         class: Amp\Http\Cookie\CookieAttributes
-        public: true
+        shared: false
         factory: [null, 'default']
         calls:
           - withPath: !returns_clone ['/']
+          - withExpiry: !returns_clone ['@=service("App\\Config").getCookieExpireTime()']
 

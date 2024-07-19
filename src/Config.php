@@ -1,6 +1,9 @@
 <?php
 namespace App;
 
+use League\Uri\Uri;
+use Psr\Http\Message\UriInterface;
+
 class Config
 {
     
@@ -8,9 +11,13 @@ class Config
     
     public string $httpRootUrl = 'http://0.0.0.0:8088/';
     
+    public string $postLoginUrl = '/';
+    
     public string $upstream = 'http://127.0.0.1:80';
     
-    public string $emailDomains = '*';
+    public string|array $emailDomains = '*';
+    
+    public string|array $emailsAllowed = '*';
 
     public bool $cookieSecure = false;
     
@@ -23,6 +30,11 @@ class Config
     public string $appLog = './app.log';
     
     
+    public function getPostLoginUrl(): UriInterface
+    {
+        return Uri::new($this->postLoginUrl);
+    }
+    
     public function getUpstreamHost()
     {
         return parse_url($this->upstream, PHP_URL_HOST);
@@ -33,4 +45,22 @@ class Config
         $port = parse_url($this->upstream, PHP_URL_PORT);
         return is_numeric($port) ? $port : 80;
     }
+    
+    public function getEmailDomains(): array
+    {
+        if (is_array($this->emailDomains)) {
+            return $this->emailDomains;
+        }
+        if ($this->emailDomains == '*') {
+            return [];
+        }
+        return preg_split('#[\s;,]+#', $this->emailDomains);
+    }
+    
+    public function getCookieExpireTime(): \DateTimeInterface
+    {
+        $now = new \DateTimeImmutable();
+        return $now->add(new \DateInterval($this->cookieExpire));
+    }
+    
 }
