@@ -10,11 +10,14 @@ use App\OAuth\IdentityData;
 use Psr\Log\LoggerInterface;
 use App\Middleware\AuthMiddleware;
 use App\AccessControl;
+use App\Config;
+use function App\responseWithRedirect;
 
 class CallbackRequestHandler implements RequestHandler
 {
     
     public function __construct(
+        private Config $config,
         private ProviderRegistry $registry,
         private LoggerInterface $logger,
         private AccessControl $access,
@@ -40,7 +43,7 @@ class CallbackRequestHandler implements RequestHandler
         AuthMiddleware::loginUser($request, $idd);
         $this->logger->info('oauth identity data: {id}', ['id' => var_export($idd, true)]);
         
-        return new Response(200, [], "ok\n");
+        return responseWithRedirect($this->config->postLoginUrl);
     }
     
 }
