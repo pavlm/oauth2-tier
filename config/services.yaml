@@ -41,6 +41,7 @@ services:
         properties:
             httpAddress: '%env(OA2T_HTTP_ADDRESS)%'
             httpRootUrl: '%env(OA2T_HTTP_ROOT_URL)%'
+            postLoginUrl: '%env(OA2T_POST_LOGIN_URL)%'
             upstream: '%env(OA2T_UPSTREAM)%'
             emailDomains: '%env(OA2T_EMAIL_DOMAINS)%'
             cookieSecret: '%env(OA2T_COOKIE_SECRET)%'
@@ -89,6 +90,16 @@ services:
     Amp\Http\Client\HttpClient:
         class: Amp\Http\Client\HttpClient
         factory: [ '@Amp\Http\Client\HttpClientBuilder', 'build' ]
+        
+    Amp\Http\Server\Session\SessionFactory:
+        class: Amp\Http\Server\Session\SessionFactory
+        arguments:
+            $storage: '@session_storage'
+        
+    session_storage:
+        class: Amp\Http\Server\Session\LocalSessionStorage
+        arguments:
+            $sessionLifetime: '@=service("App\\Config").getCookieMaxAge()'
         
     Amp\Http\Cookie\CookieAttributes:
         class: Amp\Http\Cookie\CookieAttributes

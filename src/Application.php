@@ -21,6 +21,7 @@ use App\Middleware\AuthMiddleware;
 use function Amp\Http\Server\Middleware\stackMiddleware;
 use App\Handlers\StaticRequestHandler;
 use App\Handlers\SignOutRequestHandler;
+use Amp\Http\Server\Session\SessionFactory;
 
 class Application
 {
@@ -54,7 +55,7 @@ class Application
         $router = new Router($server, $logger, $errorHandler);
         $middlewares = [
             $exceptionMiddleware,
-            new SessionMiddleware(cookieAttributes: $this->container->get(CookieAttributes::class)),
+            new SessionMiddleware(factory: $this->container->get(SessionFactory::class), cookieAttributes: $this->container->get(CookieAttributes::class)),
             new AuthMiddleware($logger),
         ];
         array_map($router->addMiddleware(...), $middlewares);

@@ -63,4 +63,11 @@ class Config
         return $now->add(new \DateInterval($this->cookieExpire));
     }
     
+    public function getCookieMaxAge(): int
+    {
+        $age = new \DateInterval($this->cookieExpire);
+        $d0 = new \DateTime('@0');
+        return intval($d0->add($age)->format('U'));
+    }
+    
 }
