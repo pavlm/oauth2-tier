@@ -1,0 +1,28 @@
+
+services:
+
+    _defaults:
+        public: true
+
+    # generic provider config example
+    oaprovider:
+        lazy: true
+        class: App\OAuth\Providers\GenericProvider
+        arguments:
+            $id: oaprovider
+            $name: OA Provider
+            $httpClient: '@Amp\Http\Client\HttpClient'
+            $redirectUri: '%env(OA2T_HTTP_ROOT_URL)%oauth2/callback/oaprovider'
+            $authorizationUrl: 'http://oaprovider/auth'
+            $accessTokenUrl: 'http://oaprovider/token'
+            $userInfoUrl: 'http://oaprovider/user'
+            $clientId: 'clientid'
+            $clientSecret: 'client secret'
+            $scopes: ['profile', 'email']
+            $loader: !service
+                class: 'App\OAuth\IdentityLoader'
+                arguments:
+                    $idPointer: /sub
+                    $namePointer: /name
+                    $avatarPointer: /avatar
+                    $emailPointer: /email
