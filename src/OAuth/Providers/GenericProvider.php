@@ -21,7 +21,7 @@ class GenericProvider extends Provider
         protected string $clientSecret,
         protected IdentityLoader $loader,
         array $scopes = [],
-        protected string $nameId = 'generic',
+        protected string $id = 'generic',
         protected string $name = 'Generic',
     ) {
         parent::__construct($httpClient, $redirectUri, $clientId, $clientSecret, \implode(' ', $scopes));
@@ -34,7 +34,7 @@ class GenericProvider extends Provider
 
     public function getInternalName(): string
     {
-        return $this->nameId;
+        return $this->id;
     }
 
     public function getIdentity(string $accessToken): Identity

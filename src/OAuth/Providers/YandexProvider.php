@@ -1,11 +1,10 @@
 <?php
 namespace App\OAuth\Providers;
 
-use Kelunik\OAuth\Identity;
-use Kelunik\OAuth\Provider;
 use Amp\Http\Client\HttpClient;
+use App\OAuth\IdentityLoader;
 
-class YandexProvider extends Provider
+class YandexProvider extends GenericProvider
 {
 
     protected string $authorizationUrl = 'https://oauth.yandex.ru/authorize';
@@ -17,24 +16,24 @@ class YandexProvider extends Provider
         string $redirectUri,
         string $clientId,
         string $clientSecret,
-        array $scopes = []
+        protected IdentityLoader $loader = new IdentityLoader('/id', '/real_name', '/avatar', '/default_email'),
+        array $scopes = ['login:info', 'login:email', 'login:avatar'],
+        protected string $id = 'yandex',
+        protected string $name = 'Yandex',
     ) {
-        parent::__construct($httpClient, $redirectUri, $clientId, $clientSecret, \implode(' ', $scopes));
-    }
-    
-    public function getName(): string
-    {
-        return 'Yandex';
-    }
-
-    public function getInternalName(): string
-    {
-        return 'yandex';
-    }
-
-    public function getIdentity(string $accessToken): Identity
-    {
-        
+        parent::__construct(
+            $httpClient, 
+            $redirectUri,
+            $this->authorizationUrl,
+            $this->accessTokenUrl,
+            $this->userInfoUrl,
+            $clientId, 
+            $clientSecret,
+            $loader,
+            $scopes,
+            $id,
+            $name,
+        );
     }
 
 }

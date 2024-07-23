@@ -8,10 +8,10 @@ use App\Application;
 require __DIR__ . '/../vendor/autoload.php';
 
 $dotenv = new Dotenv();
-$dotenv->loadEnv(__DIR__ . '/../.env', 'ENV_KEY');
+$dotenv->loadEnv(__DIR__ . '/../.env', 'OA2T_APP_ENV');
 
 $container = new ContainerBuilder();
-$loader = new YamlFileLoader($container, new FileLocator(__DIR__ . '/../config'));
+$loader = new YamlFileLoader($container, new FileLocator(__DIR__ . '/../config'), getenv('OA2T_APP_ENV'));
 $loader->load('services.yaml');
 $container->compile(true);
 

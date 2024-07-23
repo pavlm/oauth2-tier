@@ -41,8 +41,8 @@ class Application
     {
         $logHandler = new StreamHandler(\Amp\ByteStream\getStdout());
         $logHandler->pushProcessor(new PsrLogMessageProcessor());
-        //$logHandler->setFormatter(new ConsoleFormatter());
-        $logHandler->setFormatter(new JsonFormatter());
+        $logHandler->setFormatter(new ConsoleFormatter());
+        //$logHandler->setFormatter(new JsonFormatter());
         
         $logger = new Logger('server');
         $logger->pushHandler($logHandler);
@@ -50,7 +50,7 @@ class Application
         $this->container->set('logger', $logger);
         
         fwrite(fopen('php://stderr', 'wb'), print_r($this->config, true));
-        //var_export($_ENV);
+        var_export($_ENV);
         
         $errorHandler = new DefaultErrorHandler();
         $server = SocketHttpServer::createForDirectAccess($logger);

@@ -1,5 +1,5 @@
 imports:
-    - { resource: providers.yaml }
+    - { resource: providers*.yaml }
 
 parameters:
     env(OA2T_HTTP_ADDRESS): 0.0.0.0:8088
@@ -107,5 +107,6 @@ services:
         factory: [null, 'default']
         calls:
           - withPath: !returns_clone ['/']
-          - withExpiry: !returns_clone ['@=service("App\\Config").getCookieExpireTime()']
+          - withMaxAge: !returns_clone [3600]
+#          - withExpiry: !returns_clone ['@=service("App\\Config").getCookieExpireTime()']
 
