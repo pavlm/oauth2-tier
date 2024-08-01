@@ -24,7 +24,7 @@ class StartRequestHandler implements RequestHandler
         parse_str($body, $form);
 
         $providerId = $form['provider'] ?? null;
-        if (!$providerId || !$provider = $this->registry->getByName($providerId)) {
+        if (!$providerId || !$provider = $this->registry->getByNameForRequest($providerId, $request)) {
             throw new HttpErrorException(400, 'Provider not found');
         }
         

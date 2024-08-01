@@ -21,7 +21,7 @@ class SignInRequestHandler implements RequestHandler
     public function handleRequest(Request $request): Response
     {
         $providers = $this->registry->getList();
-
+        
         $user = AuthMiddleware::getRequestUser($request);
 
         $html = renderPhp(__DIR__ . '/views/signIn.php', ['providers' => $providers, 'user' => $user]);

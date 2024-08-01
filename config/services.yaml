@@ -107,6 +107,6 @@ services:
         factory: [null, 'default']
         calls:
           - withPath: !returns_clone ['/']
-          - withMaxAge: !returns_clone [3600]
+          - withMaxAge: !returns_clone ['@=service("App\\Config").getCookieMaxAge()']
 #          - withExpiry: !returns_clone ['@=service("App\\Config").getCookieExpireTime()']
 

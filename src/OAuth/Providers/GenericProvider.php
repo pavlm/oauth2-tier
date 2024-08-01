@@ -55,4 +55,16 @@ class GenericProvider extends Provider
         
     }
 
+    public function getRedirectUri(): string
+    {
+        return $this->redirectUri;
+    }
+    
+    public function withRedirectUri(string $redirectUri): self
+    {
+        $c = clone $this;
+        $c->redirectUri = $redirectUri;
+        return $c;
+    }
+
 }

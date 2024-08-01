@@ -6,7 +6,6 @@ services:
 
     # generic provider config example
     oaprovider:
-        lazy: true
         class: App\OAuth\Providers\GenericProvider
         arguments:
             $id: oaprovider

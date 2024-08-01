@@ -9,7 +9,6 @@ services:
         public: true
 
     keycloak:
-        lazy: true
         class: App\OAuth\Providers\KeycloakProvider
         arguments:
             $httpClient: '@Amp\Http\Client\HttpClient'
@@ -20,7 +19,6 @@ services:
             $scopes: '%env(json:default:scopes:OA2T_PROVIDERS_KEYCLOAK_SCOPES)%'
 
     yandex:
-        lazy: true
         class: App\OAuth\Providers\YandexProvider
         arguments:
             $httpClient: '@Amp\Http\Client\HttpClient'

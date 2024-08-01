@@ -29,7 +29,7 @@ class CallbackRequestHandler implements RequestHandler
     {
         $args = $request->getAttribute(Router::class);
         $providerId = $args['provider'];
-        $provider = $this->registry->getByName($providerId);
+        $provider = $this->registry->getByNameForRequest($providerId, $request);
         $code = $request->getQueryParameter('code');
         $token = $provider->exchangeAccessTokenForCode($code);
         $this->logger->info(

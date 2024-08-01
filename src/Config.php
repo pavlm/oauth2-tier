@@ -1,8 +1,9 @@
 <?php
 namespace App;
 
-use League\Uri\Uri;
+use League\Uri\Http as Uri;
 use Psr\Http\Message\UriInterface;
+use App\Net\IpBlock;
 
 class Config
 {
@@ -25,10 +26,18 @@ class Config
     
     public array $providers = [];
     
+    public string|array $trustedForwarders = '127.0.0.0/8,172.16.0.0/12,192.168.0.0/16';
+    
     public string $accessLog = './access.log';
     
     public string $appLog = './app.log';
     
+    private $trustedForwarderBlocks;
+    
+    public function getHttpRootUrl(): UriInterface
+    {
+        return Uri::new($this->httpRootUrl);
+    }
     
     public function getPostLoginUrl(): UriInterface
     {
@@ -68,6 +77,16 @@ class Config
         $age = new \DateInterval($this->cookieExpire);
         $d0 = new \DateTime('@0');
         return intval($d0->add($age)->format('U'));
+    }
+    
+    public function getTrustedForwarders(): array
+    {
+        return is_array($this->trustedForwarders) ? $this->trustedForwarders : preg_split('#[\s;,]+#', $this->trustedForwarders);
+    }
+    
+    public function getTrustedForwarderBlocks(): array
+    {
+        return $this->trustedForwarderBlocks ??= array_map(fn ($block) => IpBlock::createFromCidr($block), $this->getTrustedForwarders());
     }
     
 }
