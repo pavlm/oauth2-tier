@@ -59,7 +59,7 @@ class Application
         $middlewares = [
             new ForwardedMiddleware($this->config->getTrustedForwarderBlocks()),
             new AccessLoggerMiddleware(new WritableResourceStream(fopen($this->config->accessLog, 'a'))),
-            new ExceptionHandlerMiddleware($errorHandler),
+            new ExceptionHandlerMiddleware($errorHandler, $logger),
             new SessionMiddleware(factory: $this->container->get(SessionFactory::class), cookieAttributes: $this->container->get(CookieAttributes::class)),
             new AuthMiddleware($logger),
         ];
