@@ -25,6 +25,7 @@ use Amp\Http\Server\Session\SessionFactory;
 use Monolog\Formatter\JsonFormatter;
 use App\Middleware\AccessLoggerMiddleware;
 use Amp\ByteStream\WritableResourceStream;
+use App\Middleware\ForwardedMiddleware;
 
 class Application
 {
@@ -56,6 +57,7 @@ class Application
         $server = SocketHttpServer::createForDirectAccess($logger);
         $router = new Router($server, $logger, $errorHandler);
         $middlewares = [
+            new ForwardedMiddleware($this->config->getTrustedForwarderBlocks()),
             new AccessLoggerMiddleware(new WritableResourceStream(fopen($this->config->accessLog, 'a'))),
             new ExceptionHandlerMiddleware($errorHandler),
             new SessionMiddleware(factory: $this->container->get(SessionFactory::class), cookieAttributes: $this->container->get(CookieAttributes::class)),

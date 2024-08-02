@@ -8,15 +8,12 @@ use App\OAuth\Providers\GenericProvider;
 use Psr\Http\Message\UriInterface;
 use League\Uri\Http as Uri;
 use Amp\Http\Server\Request;
-use Amp\Socket\InternetAddress;
-use App\Net\IpFilter;
+use App\Middleware\ForwardedData;
 
 class ProviderRegistry
 {
     
     private $providerByHostCache = [];
-    
-    private IpFilter $ipForwarderFilter;
     
     public function __construct(
         private Config $config,
@@ -26,7 +23,6 @@ class ProviderRegistry
         private array $providers,
     )
     {
-        $this->ipForwarderFilter = new IpFilter($this->config->getTrustedForwarderBlocks());
     }
     
     public function getList(): array
@@ -52,7 +48,7 @@ class ProviderRegistry
         $hostRootUri = Uri::new()->withHost($hostUri->getHost())->withPort($hostUri->getPort())->withScheme($hostUri->getScheme()); // root site url
         
         $providerId = $name . $hostRootUri;
-        if ($provider = $this->providerByHostCache[$providerId]) {
+        if ($provider = $this->providerByHostCache[$providerId] ?? null) {
             return $provider;
         }
         $providerOrig = $this->getByName($name);
@@ -67,25 +63,14 @@ class ProviderRegistry
     
     public function getByNameForRequest($name, Request $request): GenericProvider
     {
-        $isForwarded = $request->hasHeader('x-forwarded-for') && $request->hasHeader('x-forwarded-host') && $request->hasHeader('x-forwarded-proto');
+        /** @var ForwardedData $forwarded */
+        $forwarded = $request->hasAttribute(ForwardedData::class) ? $request->getAttribute(ForwardedData::class) : null;
         
-        if (!$isForwarded) {
+        if (!$forwarded) {
             return $this->getByNameForHost($name, $this->config->getHttpRootUrl());
         }
-        assert($request->getClient()->getRemoteAddress() instanceof InternetAddress);
-        $forwarderIp = $request->getClient()->getRemoteAddress()->getAddress();
-        if ($this->ipForwarderFilter->check($forwarderIp)) { // trusted forwarder
-            $host = $request->getHeader('x-forwarded-host');
-            $port = null;
-            if (str_contains($host, ':')) {
-                [$host, $port] = explode(':', $host);
-            }
-            $proto = $request->getHeader('x-forwarded-proto');
-            $originalHost = Uri::new()->withHost($host)->withPort($port)->withScheme($proto);
-            return $this->getByNameForHost($name, $originalHost);
-        } else {
-            return $this->getByNameForHost($name, $this->config->getHttpRootUrl());
-        }
+        $originalHost = Uri::new()->withHost($forwarded->getHostName())->withPort($forwarded->getHostPort())->withScheme($forwarded->proto);
+        return $this->getByNameForHost($name, $originalHost);
     }
     
 }
