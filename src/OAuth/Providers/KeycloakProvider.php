@@ -9,7 +9,6 @@ class KeycloakProvider extends GenericProvider
 
     public function __construct(
         protected HttpClient $httpClient,
-        protected string $redirectUri,
         protected string $realmUrl,
         protected string $clientId,
         protected string $clientSecret,
@@ -20,7 +19,7 @@ class KeycloakProvider extends GenericProvider
     ) {
         parent::__construct(
             $httpClient, 
-            $redirectUri, 
+            '/oauth2/callback/keycloak', 
             $realmUrl . '/protocol/openid-connect/auth',
             $realmUrl . '/protocol/openid-connect/token',
             $realmUrl . '/protocol/openid-connect/userinfo',

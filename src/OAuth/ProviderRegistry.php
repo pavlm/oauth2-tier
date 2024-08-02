@@ -53,9 +53,9 @@ class ProviderRegistry
         }
         $providerOrig = $this->getByName($name);
         $redirectUri = Uri::new($providerOrig->getRedirectUri())
-            ->withScheme($hostRootUri->getScheme())
             ->withHost($hostRootUri->getHost())
-            ->withPort($hostRootUri->getPort());
+            ->withPort($hostRootUri->getPort())
+            ->withScheme($hostRootUri->getScheme());
         $provider = $providerOrig->withRedirectUri($redirectUri);
         $this->providerByHostCache[$providerId] = $provider;
         return $provider;

@@ -12,7 +12,6 @@ services:
         class: App\OAuth\Providers\KeycloakProvider
         arguments:
             $httpClient: '@Amp\Http\Client\HttpClient'
-            $redirectUri: '%env(OA2T_HTTP_ROOT_URL)%oauth2/callback/keycloak'
             $realmUrl: '%env(default:empty:OA2T_PROVIDERS_KEYCLOAK_REALM_URL)%'
             $clientId: '%env(default:empty:OA2T_PROVIDERS_KEYCLOAK_CLIENT_ID)%'
             $clientSecret: '%env(default:empty:OA2T_PROVIDERS_KEYCLOAK_CLIENT_SECRET)%'
@@ -22,7 +21,6 @@ services:
         class: App\OAuth\Providers\YandexProvider
         arguments:
             $httpClient: '@Amp\Http\Client\HttpClient'
-            $redirectUri: '%env(OA2T_HTTP_ROOT_URL)%oauth2/callback/yandex'
             $clientId: '%env(default:empty:OA2T_PROVIDERS_YANDEX_CLIENT_ID)%'
             $clientSecret: '%env(default:empty:OA2T_PROVIDERS_YANDEX_CLIENT_SECRET)%'
 

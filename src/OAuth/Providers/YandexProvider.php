@@ -13,7 +13,6 @@ class YandexProvider extends GenericProvider
     
     public function __construct(
         HttpClient $httpClient,
-        string $redirectUri,
         string $clientId,
         string $clientSecret,
         protected IdentityLoader $loader = new IdentityLoader('/id', '/real_name', '/avatar', '/default_email'),
@@ -23,7 +22,7 @@ class YandexProvider extends GenericProvider
     ) {
         parent::__construct(
             $httpClient, 
-            $redirectUri,
+            '/oauth2/callback/yandex',
             $this->authorizationUrl,
             $this->accessTokenUrl,
             $this->userInfoUrl,
