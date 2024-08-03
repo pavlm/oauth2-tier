@@ -54,7 +54,7 @@ class Application
         var_export($_ENV);
         
         $errorHandler = new DefaultErrorHandler();
-        $server = SocketHttpServer::createForDirectAccess($logger);
+        $server = SocketHttpServer::createForDirectAccess($logger, enableCompression: true);
         $router = new Router($server, $logger, $errorHandler);
         $middlewares = [
             new ForwardedMiddleware($this->config->getTrustedForwarderBlocks()),

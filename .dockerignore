@@ -1,0 +1,6 @@
+.env
+config/providers.local.yaml
+vendor
+tmp
+*.log
+
