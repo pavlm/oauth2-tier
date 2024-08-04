@@ -1,0 +1,19 @@
+
+services:
+
+  app:
+    image: oauth2tier
+    pull_policy: never
+    build:
+      context: ./../
+      dockerfile: docker/Dockerfile
+      target: app
+    environment:
+     - XDEBUG_MODE=off
+    volumes: 
+     - ../.env:/app/.env
+     - ../access.log:/app/access.log
+    working_dir: /app
+    command: php src/index.php
+    ports:
+     - $OA2T_HTTP_PORT:$OA2T_HTTP_PORT
