@@ -1,4 +1,20 @@
 {
+	"name" : "pavlm/oauth2-tier",
+	"homepage" : "https://github.com/pavlm/oauth2-tier",
+	"description" : "OAuth2 proxy server based on amphp async framework.",
+	"keywords" : [
+		"oauth2",
+		"proxy",
+		"server",
+		"php",
+		"amphp",
+		"async"
+	],
+	"authors" : [{
+			"name" : "pavlm",
+			"email" : "pavlm.dev@gmail.com"
+		}
+	],
 	"require" : {
 		"amphp/http-server" : "^3.3",
 		"amphp/log" : "^2.0",
@@ -10,15 +26,18 @@
 		"amphp/http-server-router" : "^2.0",
 		"symfony/dotenv" : "^6.4",
 		"amphp/byte-stream" : "^2.1",
-		"amphp/http-server-session": "^3.0",
-		"symfony/expression-language": "^6.4"
+		"amphp/http-server-session" : "^3.0",
+		"symfony/expression-language" : "^6.4"
 	},
 	"autoload" : {
 		"psr-4" : {
 			"App\\" : "./src"
 		},
-		"files": [
+		"files" : [
 			"src/functions.php"
 		]
+	},
+	"scripts" : {
+		"patch-vendor" : "bin/patch-vendor.sh"
 	}
 }

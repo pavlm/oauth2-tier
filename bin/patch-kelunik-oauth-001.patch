@@ -1,0 +1,22 @@
+diff --git a/src/Provider.php b/src/Provider.php
+index 1f47453..03f746a 100644
+--- a/src/Provider.php
++++ b/src/Provider.php
+@@ -2,7 +2,7 @@
+ 
+ namespace Kelunik\OAuth;
+ 
+-use Amp\Http\Client\Body\FormBody;
++use Amp\Http\Client\Form;
+ use Amp\Http\Client\HttpClient;
+ use Amp\Http\Client\Request;
+ 
+@@ -51,7 +51,7 @@ abstract class Provider
+ 
+     public function exchangeAccessTokenForCode(string $code): string
+     {
+-        $form = new FormBody;
++        $form = new Form;
+         $form->addField('grant_type', 'authorization_code');
+         $form->addField('redirect_uri', $this->redirectUri);
+         $form->addField('client_id', $this->clientId);
