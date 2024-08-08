@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title><?= $title ?? 'OAuth2 tier' ?></title>
+    <title>Error <?= $code ?></title>
     <style>
     <?php require '_css.php'; ?>
     </style>
@@ -10,9 +10,10 @@
 <body>
     <div class="box">
         <header>
-            <h1><?= $title ?? 'OAuth2 tier' ?></h1>
+            <h1>Error <?= $code ?></h1>
         </header>
         <main>
+            <p><?= $reason ?></p>
             <ul>
                 <li>Try again later.</li>
                 <li>Check if you visited the correct URL.</li>

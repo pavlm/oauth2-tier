@@ -5,7 +5,7 @@ use Amp\Log\StreamHandler;
 use Monolog\Processor\PsrLogMessageProcessor;
 use Amp\Log\ConsoleFormatter;
 use Monolog\Logger;
-use Amp\Http\Server\DefaultErrorHandler;
+use App\Handlers\AppErrorHandler;
 use Amp\Http\Server\SocketHttpServer;
 use Amp\Http\Server\Router;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -53,7 +53,7 @@ class Application
         fwrite(fopen('php://stderr', 'wb'), print_r($this->config, true));
         var_export($_ENV);
         
-        $errorHandler = new DefaultErrorHandler();
+        $errorHandler = new AppErrorHandler();
         $server = SocketHttpServer::createForDirectAccess($logger, enableCompression: true);
         $router = new Router($server, $logger, $errorHandler);
         $middlewares = [
