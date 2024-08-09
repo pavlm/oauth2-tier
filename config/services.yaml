@@ -6,7 +6,6 @@ parameters:
     env(OA2T_HTTP_ROOT_URL): http://0.0.0.0:8088/
     env(OA2T_UPSTREAM): http://127.0.0.0:80/
     env(OA2T_EMAIL_DOMAINS): '*'
-    env(OA2T_COOKIE_SECRET): b1677dfde85309b4b99e72bc4f547442
     env(OA2T_COOKIE_SECURE): 'true'
     env(OA2T_COOKIE_EXPIRE): PT24H
     env(OA2T_PROVIDERS): '["yandex", "google"]'
@@ -44,9 +43,8 @@ services:
             postLoginUrl: '%env(OA2T_POST_LOGIN_URL)%'
             upstream: '%env(OA2T_UPSTREAM)%'
             emailDomains: '%env(OA2T_EMAIL_DOMAINS)%'
-            cookieSecret: '%env(OA2T_COOKIE_SECRET)%'
-            cookieSecure: '%env(bool:OA2T_COOKIE_SECURE)%'
             cookieExpire: '%env(OA2T_COOKIE_EXPIRE)%'
+            cookieSecure: '%env(bool:OA2T_COOKIE_SECURE)%'
             providers: '%env(json:OA2T_PROVIDERS)%'
 #            providers: '%env(graph:OA2T_PROVIDERS)%'
             
@@ -101,12 +99,3 @@ services:
         arguments:
             $sessionLifetime: '@=service("App\\Config").getCookieMaxAge()'
         
-    Amp\Http\Cookie\CookieAttributes:
-        class: Amp\Http\Cookie\CookieAttributes
-        shared: false
-        factory: [null, 'default']
-        calls:
-          - withPath: !returns_clone ['/']
-          - withMaxAge: !returns_clone ['@=service("App\\Config").getCookieMaxAge()']
-#          - withExpiry: !returns_clone ['@=service("App\\Config").getCookieExpireTime()']
-

@@ -53,6 +53,13 @@ class Application
         fwrite(fopen('php://stderr', 'wb'), print_r($this->config, true));
         var_export($_ENV);
         
+        $cookieAttributes = CookieAttributes::default()
+            ->withPath('/')
+            ->withMaxAge($this->config->getCookieMaxAge());
+        if ($this->config->cookieSecure) {
+            $cookieAttributes = $cookieAttributes->withSecure();
+        }
+        
         $errorHandler = new AppErrorHandler();
         $server = SocketHttpServer::createForDirectAccess($logger, enableCompression: true);
         $router = new Router($server, $logger, $errorHandler);
@@ -60,7 +67,7 @@ class Application
             new ForwardedMiddleware($this->config->getTrustedForwarderBlocks()),
             new AccessLoggerMiddleware(new WritableResourceStream(fopen($this->config->accessLog, 'a'))),
             new ExceptionHandlerMiddleware($errorHandler, $logger),
-            new SessionMiddleware(factory: $this->container->get(SessionFactory::class), cookieAttributes: $this->container->get(CookieAttributes::class)),
+            new SessionMiddleware(factory: $this->container->get(SessionFactory::class), cookieAttributes: $cookieAttributes),
             new AuthMiddleware($logger),
         ];
         array_map($router->addMiddleware(...), $middlewares);
