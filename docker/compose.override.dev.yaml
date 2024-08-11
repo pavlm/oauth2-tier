@@ -1,4 +1,6 @@
 
+# for dev mode copy file to compose.override.yaml
+
 services:
 
   app:
