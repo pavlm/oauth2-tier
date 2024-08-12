@@ -1,0 +1,56 @@
+# demo preconfigured application
+
+services:
+  
+    app:
+        extends:
+            file: ../compose.yaml
+            service: app
+        volumes:
+          - .env:/app/.env 
+        networks:
+            default:
+                ipv4_address: $SUBNET_PREFIX.2
+      
+
+    keycloak:
+        image: quay.io/keycloak/keycloak:25.0
+        environment:
+          - KEYCLOAK_ADMIN=admin
+          - KEYCLOAK_ADMIN_PASSWORD=admin
+          - KC_HEALTH_ENABLED=true
+        healthcheck:
+            test: cat /proc/net/tcp /proc/net/tcp6 | grep 00000000:1F90
+            interval: 10s
+        command: start-dev
+        networks:
+            default:
+                ipv4_address: $SUBNET_PREFIX.3
+
+    kc-init:
+        image: quay.io/keycloak/keycloak:25.0
+        environment:
+          - KEYCLOAK_ADMIN=admin
+          - KEYCLOAK_ADMIN_PASSWORD=admin
+        env_file: .env
+        depends_on:
+            keycloak:
+                condition: service_healthy
+        entrypoint: ['bash', '-c']
+        command:
+          - |
+             set -x
+             cd /opt/keycloak/bin
+             ./kcadm.sh config credentials --server http://${SUBNET_PREFIX}.3:8080 --realm master --user admin --password admin
+             ./kcadm.sh create realms -s realm=test -s enabled=true
+             ./kcadm.sh create /clients -r test -f - <<< '{"clientId": "oa2tier", "secret": "1234512345asdfASDF", "redirectUris":["http://${SUBNET_PREFIX}.2:${OA2T_HTTP_PORT}/oauth2/callback/keycloak"], "rootUrl": "http://${SUBNET_PREFIX}.2:${OA2T_HTTP_PORT}/"}'
+             ./kcadm.sh create /users -o -r test -f - <<< '{"username": "test", "email": "e@ma.il", "emailVerified": true, "enabled": true}'
+             ./kcadm.sh set-password -r test --username test --new-password test
+
+
+networks:
+  default:
+    ipam:
+      config:
+        - subnet: $SUBNET_PREFIX.0/24
+          gateway: $SUBNET_PREFIX.1

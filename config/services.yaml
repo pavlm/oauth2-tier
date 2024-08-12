@@ -43,6 +43,7 @@ services:
             postLoginUrl: '%env(OA2T_POST_LOGIN_URL)%'
             upstream: '%env(OA2T_UPSTREAM)%'
             emailDomains: '%env(OA2T_EMAIL_DOMAINS)%'
+            emailsAllowed: '%env(OA2T_EMAILS_ALLOWED)%'
             cookieExpire: '%env(OA2T_COOKIE_EXPIRE)%'
             cookieSecure: '%env(bool:OA2T_COOKIE_SECURE)%'
             providers: '%env(json:OA2T_PROVIDERS)%'
