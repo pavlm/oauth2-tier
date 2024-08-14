@@ -1,7 +1,10 @@
 OAuth2 tier
 ===
 
-Proxy server for secure access to http backend, with authorization on external OAuth2 servers. It's similar to oauth2-proxy project but has some differences:  
+Proxy server for secure access to http backend, with authorization on external OAuth2 servers. 
+It's similar to oauth2-proxy project.
+
+## Features
 
 * Several OAuth providers simultaneously can be used (only two for now).
 * Uses amphp v3 asynchronous framework, so quite performant.
@@ -38,12 +41,19 @@ OA2T_PROVIDERS_YANDEX_CLIENT_SECRET=
 ```
 
 
-Building and start
----
+## Building and start
 
 ```
 make build_image && make up
 ```
 
-Test
----
+## Demo
+
+Demo application is available as preconfigured docker compose services.
+
+1. Run demo: `make build_image; cd docker/demo; docker compose up -d`
+2. Open proxy page http://192.168.234.2:8191/
+3. Error page (status 401) must be shown.
+4. Follow the `Login` link to http://192.168.234.2:8191/oauth2/sign_in page.
+5. Try to login with keycloak provider using `test` / `test` credentials.
+6. Backend resources will be available after successful login.
