@@ -9,6 +9,9 @@ parameters:
     env(OA2T_COOKIE_SECURE): 'true'
     env(OA2T_COOKIE_EXPIRE): PT24H
     env(OA2T_PROVIDERS): '["yandex", "google"]'
+    env(OA2T_TRUSTED_FORWARDERS): ''
+    env(OA2T_ACCESS_LOG): './access.log'
+    env(OA2T_APP_LOG): 'php://stdout'
     
 
 services:
@@ -47,7 +50,9 @@ services:
             cookieExpire: '%env(OA2T_COOKIE_EXPIRE)%'
             cookieSecure: '%env(bool:OA2T_COOKIE_SECURE)%'
             providers: '%env(json:OA2T_PROVIDERS)%'
-#            providers: '%env(graph:OA2T_PROVIDERS)%'
+            trustedForwarders: '%env(OA2T_TRUSTED_FORWARDERS)%'
+            accessLog: '%env(OA2T_ACCESS_LOG)%'
+            appLog: '%env(OA2T_APP_LOG)%'
             
     App\Application:
         class: App\Application

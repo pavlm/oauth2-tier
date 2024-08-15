@@ -27,6 +27,9 @@ OA2T_EMAIL_DOMAINS=*                          # allowed user email domains
 OA2T_COOKIE_SECURE=false                      # cookie secure flag 
 OA2T_COOKIE_EXPIRE=PT33H                      # cookie and session duration, in PHP DateInterval format
 OA2T_PROVIDERS='["yandex", "keycloak"]'       # configured OAuth providers
+OA2T_TRUSTED_FORWARDERS=127.0.0.0/8,172.16.0.0/12,192.168.0.0/16 # accept forwarded-x http headers from these proxies
+OA2T_ACCESS_LOG=./access.log                  # access log file name
+OA2T_APP_LOG=php://stdout                     # application log file name
 
 ## OAuth2 providers configuration
 

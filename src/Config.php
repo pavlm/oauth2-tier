@@ -30,7 +30,7 @@ class Config
     
     public string $accessLog = './access.log';
     
-    public string $appLog = './app.log';
+    public string $appLog = 'php://stdout';
     
     private $trustedForwarderBlocks;
     
@@ -81,7 +81,7 @@ class Config
     
     public function getTrustedForwarders(): array
     {
-        return is_array($this->trustedForwarders) ? $this->trustedForwarders : preg_split('#[\s;,]+#', $this->trustedForwarders);
+        return is_array($this->trustedForwarders) ? $this->trustedForwarders : array_filter(preg_split('#[\s;,]+#', $this->trustedForwarders));
     }
     
     public function getTrustedForwarderBlocks(): array

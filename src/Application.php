@@ -40,7 +40,7 @@ class Application
 
     public function run()
     {
-        $logHandler = new StreamHandler(\Amp\ByteStream\getStdout());
+        $logHandler = new StreamHandler(new WritableResourceStream(fopen($this->config->appLog, 'a+')));
         $logHandler->pushProcessor(new PsrLogMessageProcessor());
         $logHandler->setFormatter(new ConsoleFormatter());
         //$logHandler->setFormatter(new JsonFormatter());
