@@ -26,6 +26,7 @@ use Monolog\Formatter\JsonFormatter;
 use App\Middleware\AccessLoggerMiddleware;
 use Amp\ByteStream\WritableResourceStream;
 use App\Middleware\ForwardedMiddleware;
+use App\Middleware\XDebugMiddleware;
 
 class Application
 {
@@ -64,6 +65,7 @@ class Application
         $server = SocketHttpServer::createForDirectAccess($logger, enableCompression: true);
         $router = new Router($server, $logger, $errorHandler);
         $middlewares = [
+            new XDebugMiddleware(),
             new ForwardedMiddleware($this->config->getTrustedForwarderBlocks()),
             new AccessLoggerMiddleware(new WritableResourceStream(fopen($this->config->accessLog, 'a'))),
             new ExceptionHandlerMiddleware($errorHandler, $logger),
