@@ -1,9 +1,11 @@
 <?php
 use Kelunik\OAuth\Provider;
 use App\OAuth\IdentityData;
+use Amp\Http\Server\Request;
 
 /** @var Provider[] $providers */
 /** @var IdentityData $user */
+/** @var Request $request */
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -33,6 +35,7 @@ use App\OAuth\IdentityData;
             	<?php foreach ($providers as $provider): ?>
                 <button type="submit" name="provider" value="<?= $provider->getInternalName() ?>" class="mb-3"><?= $provider->getName() ?></button>
                 <?php endforeach; ?>
+                <input type="hidden" name="redirect_url" value="<?= htmlspecialchars($request->getQueryParameter('redirect_url')) ?>" >
             </form>
         </div>
         <?php if ($user): ?>

@@ -9,6 +9,7 @@ use Amp\Http\Server\Session\Session;
 use App\OAuth\IdentityData;
 use Psr\Log\LoggerInterface;
 use Amp\Http\Server\HttpErrorException;
+use League\Uri\BaseUri;
 
 class AuthMiddleware implements Middleware
 {
@@ -36,7 +37,10 @@ class AuthMiddleware implements Middleware
         
         if (!$identity) {
             if (!preg_match(self::PUBLIC_PATH, $request->getUri()->getPath())) {
-                throw new HttpErrorException(401, 'Not authorized. <a href="/oauth2/sign_in">Login</a>');
+                $root = BaseUri::from($request->getUri())->origin();
+                $redirectUrl = '/' . $root->relativize($request->getUri())->getUriString();
+                $link = sprintf('<a href="/oauth2/sign_in?redirect_url=%s">Login</a>', urlencode($redirectUrl));
+                throw new HttpErrorException(401, 'Not authorized. ' . $link);
             }
         }
         

@@ -7,6 +7,7 @@ use Amp\Http\Server\Response;
 use Amp\Http\Server\Router;
 use App\OAuth\ProviderRegistry;
 use Amp\Http\Server\HttpErrorException;
+use Amp\Http\Server\Session\Session;
 
 class StartRequestHandler implements RequestHandler
 {
@@ -27,7 +28,15 @@ class StartRequestHandler implements RequestHandler
         if (!$providerId || !$provider = $this->registry->getByNameForRequest($providerId, $request)) {
             throw new HttpErrorException(400, 'Provider not found');
         }
-        
+        $redirectUrl = $form['redirect_url'] ?? null;
+        if ($redirectUrl) {
+            /** @var Session $session */
+            $session = $request->getAttribute(Session::class);
+            $session->lock();
+            $session->set('redirectUrl', $redirectUrl);
+            $session->commit();
+        }
+            
         $url = $provider->getAuthorizationUrl('');
         
         return new Response(302, [

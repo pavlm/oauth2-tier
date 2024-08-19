@@ -12,6 +12,7 @@ use App\Middleware\AuthMiddleware;
 use App\AccessControl;
 use App\Config;
 use function App\responseWithRedirect;
+use Amp\Http\Server\Session\Session;
 
 class CallbackRequestHandler implements RequestHandler
 {
@@ -43,7 +44,17 @@ class CallbackRequestHandler implements RequestHandler
         AuthMiddleware::loginUser($request, $idd);
         $this->logger->info('oauth identity data: {id}', ['id' => var_export($idd, true)]);
         
-        return responseWithRedirect($this->config->postLoginUrl);
+        // select redirect url
+        $redirectUrl = $this->config->postLoginUrl;
+        if (!$redirectUrl) {
+            /** @var Session $session */
+            $session = $request->getAttribute(Session::class);
+            $url = $session->has('redirectUrl') ? $session->get('redirectUrl') : '/';
+            $isAbsolute = preg_match('#^\w+://#', $url);
+            $redirectUrl = $isAbsolute ? '/' : $url;
+        }
+        
+        return responseWithRedirect($redirectUrl);
     }
     
 }

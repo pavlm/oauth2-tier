@@ -24,7 +24,7 @@ class SignInRequestHandler implements RequestHandler
         
         $user = AuthMiddleware::getRequestUser($request);
 
-        $html = renderPhp(__DIR__ . '/views/signIn.php', ['providers' => $providers, 'user' => $user]);
+        $html = renderPhp(__DIR__ . '/views/signIn.php', ['providers' => $providers, 'user' => $user, 'request' => $request]);
         
         return new Response(200, [
             "content-type" => "text/html; charset=utf-8"
