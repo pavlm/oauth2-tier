@@ -66,7 +66,7 @@ class ProviderRegistry
         /** @var ForwardedData $forwarded */
         $forwarded = $request->hasAttribute(ForwardedData::class) ? $request->getAttribute(ForwardedData::class) : null;
         
-        if (!$forwarded) {
+        if (!$forwarded?->trustedForwarder) {
             return $this->getByNameForHost($name, $this->config->getHttpRootUrl());
         }
         $originalHost = Uri::new()->withHost($forwarded->getHostName())->withPort($forwarded->getHostPort())->withScheme($forwarded->proto);

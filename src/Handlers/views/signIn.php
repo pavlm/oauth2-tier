@@ -35,7 +35,7 @@ use Amp\Http\Server\Request;
             	<?php foreach ($providers as $provider): ?>
                 <button type="submit" name="provider" value="<?= $provider->getInternalName() ?>" class="mb-3"><?= $provider->getName() ?></button>
                 <?php endforeach; ?>
-                <input type="hidden" name="redirect_url" value="<?= htmlspecialchars($request->getQueryParameter('redirect_url')) ?>" >
+                <input type="hidden" name="redirect_url" value="<?= htmlspecialchars($request->getQueryParameter('redirect_url') ?? '/') ?>" >
             </form>
         </div>
         <?php if ($user): ?>
