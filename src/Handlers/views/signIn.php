@@ -8,7 +8,7 @@ use Amp\Http\Server\Request;
 /** @var Request $request */
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="d-flex">
 <head>
     <meta charset="UTF-8">
     <title><?= $title ?? 'OAuth2 tier (proxy)' ?></title>

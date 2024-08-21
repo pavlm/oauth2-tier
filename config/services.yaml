@@ -9,7 +9,7 @@ parameters:
     env(OA2T_COOKIE_SECURE): 'true'
     env(OA2T_COOKIE_EXPIRE): PT24H
     env(OA2T_PROVIDERS): '["yandex", "google"]'
-    env(OA2T_TRUSTED_FORWARDERS): ''
+    env(OA2T_TRUSTED_FORWARDERS): '127.0.0.0/8,172.16.0.0/12,192.168.0.0/16'
     env(OA2T_ACCESS_LOG): './access.log'
     env(OA2T_APP_LOG): 'php://stdout'
     

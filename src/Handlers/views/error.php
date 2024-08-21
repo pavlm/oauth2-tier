@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="d-flex">
 <head>
     <meta charset="UTF-8">
     <title>Error <?= $code ?></title>

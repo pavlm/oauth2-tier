@@ -10,6 +10,9 @@ body, html {
     padding: 0;
     background: #eee;
     font-family: monospace;
+}
+
+html.d-flex, html.d-flex > body  {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -85,6 +88,14 @@ button:active {
 
 .d-flex {
     display: flex;
+}
+
+.flex-column {
+    flex-direction: column;
+}
+
+.error {
+    text-color: #d00;
 }
 
 .mb-1 {
