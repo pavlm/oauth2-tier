@@ -8,7 +8,7 @@ class FileBrowser
 {
     const MAX_URL_LENGTH = 2048;
     
-    public $targetDir = '/';
+    public $targetDir;
     public $targetFile;
     private $directFileLink = false;
     
@@ -32,102 +32,152 @@ class FileBrowser
      */
     public function selectTarget(string $url)
     {
-        if (strlen($url) > self::MAX_URL_LENGTH) {
-            throw new \Exception('too long url');
-        }
+        $url1 = new FileUrl($url, $this->rootDir);    
         
-        $path = realpath2($this->rootDir . $url);
-        if (strlen($path) < strlen($this->rootDir)) {
-            $this->dirError = new \Exception('wrong target');
-            $this->targetDir = $url;
-            $this->targetFile = null;
-            return;
-        }
-        $relPath = substr($path, strlen($this->rootDir));
-        ['dirname' => $relDir, 'basename' => $lastName] = pathinfo($relPath);
-        $relDir .=  $relDir[-1] !== '/' ? '/' : '';
-        
-        if (is_dir($path)) {
-            $this->targetDir = $relPath;
-            $this->targetFile = null;
+        if ($url1->isDir()) {
+            $this->targetDir = $url1;
             return;
         }
         
-        if (is_file($path)) {
-            $this->directFileLink = true;
-            $this->targetDir = $relDir;
-            $this->targetFile = $lastName;
+        if ($url1->isFile()) {
+            $this->targetFile = $url1;
+            $this->targetDir = $url1->getParent();
             return;
         }
         
-        $extension = pathinfo($path, PATHINFO_EXTENSION);
+        $extension = $url1->getExtension();
         if ($extension == $this->virtualExtension) {
-            $path2 = substr($path, 0, -strlen($extension)-1);
-            $relPath2 = substr($path2, strlen($this->rootDir));
-            $basename2 = pathinfo($path2, PATHINFO_BASENAME);
+            $url2 = new FileUrl(substr($url1->url, 0, -strlen($extension)-1), $this->rootDir); // url without extension
             
-            if (is_dir($path2)) {
-                $this->targetDir = $relPath2;
-                $this->targetFile = null;
+            if ($url2->isDir()) {
+                $this->targetDir = $url2;
                 return;
             }
             
-            if (is_file($path2)) {
-                $this->targetDir = $relDir;
-                $this->targetFile = $basename2;
+            if ($url2->isFile()) {
+                $this->targetFile = $url2;
+                $this->targetDir = $url2->getParent();
                 return;
             }
-            $this->dirError = new \Exception('directory not found');
-            $this->fileError = new \Exception('file not found');
-            $this->targetDir = $relPath;
-            $this->targetFile = null;
-            return;
+        } else { // no extension
+            $url2 = $url1->getParent();
+            if ($url2->isDir()) {
+                $this->targetDir = $url2;
+                $this->targetFile = $url1;
+                $this->fileError = new \Exception('file not found');
+                return;
+            }
         }
-        
-        // check $path parent dir
-        ['dirname' => $pathDirname, 'basename' => $pathBasename] = pathinfo($path);
-        $pathDirname .=  $pathDirname[-1] !== '/' ? '/' : '';
-        if (is_dir($pathDirname)) {
-            $relPathDirname = substr($pathDirname, strlen($this->rootDir));
-            $this->targetDir = $relPathDirname;
-            $this->targetFile = $pathBasename;
-            $this->fileError = new \Exception('file not found');
-            return;
-        }
-        
+
         $this->dirError = new \Exception('directory not found');
         $this->fileError = new \Exception('file not found');
-        $this->targetDir = $relPath;
-        $this->targetFile = null;
     }
     
     public function readTarget()
     {
-        $dir = $this->rootDir . $this->targetDir;
-        if (is_dir($dir)) {
-            $this->dirContent = new \DirectoryIterator($dir);
-        } else {
+        if ($this->targetDir) {
+            $it = new \LimitIterator(new \DirectoryIterator($this->targetDir->path), 0, 1000);
             $this->dirContent = [];
+            foreach ($it as $file) {
+                if ($file->isDot()) continue;
+                $this->dirContent[] = clone $file->getFileInfo();
+            }
+            usort($this->dirContent, fn ($f1, $f2) => $f2->isDir() <=> $f1->isDir() ?: $f1->getFilename() <=> $f2->getFilename());
         }
         
         $this->fileContent = null;
         if ($this->targetFile && !$this->fileError) {
-            $file = $this->rootDir . $this->targetDir . $this->targetFile;
-            if (!is_file($file)) {
-                $this->fileError = new \Exception('too large file');
-                return;
-            }
-            $size = filesize($file);
+            $size = filesize($this->targetFile->path);
             if ($size > $this->maxFileSize) {
                 $this->fileError = new \Exception('too large file');
                 return;
             }
-            $this->fileContent = @file_get_contents($file);
+            $this->fileContent = @file_get_contents($this->targetFile->path);
             if (false === $this->fileContent) {
                 $this->fileError = new \Exception('file read error');
                 return;
             }
         }
+    }
+    
+}
+
+class FileUrl
+{
+    public $fileRoot;
+    public $url;
+    private bool $rootUrl;
+    public $path;
+    private $parts;
+    
+    /**
+     * @param string $url relative url
+     * @param string $fileRoot fs directory
+     */
+    public function __construct(string $url, string $fileRoot)
+    {
+        $this->fileRoot = $fileRoot;
+        $this->url = $this->filterPath($url);
+        $this->rootUrl = strlen($this->url) == 1;
+        $this->path = $this->fileRoot . $this->url;
+        $this->parts = pathinfo($this->path);
+    }
+    
+    private function filterPath($path)
+    {
+        $path = implode('/', array_filter(explode('/', $path), fn ($seg) => $seg !== '..'));
+        $path = preg_replace('#//+#', '', $path);
+        $path = rtrim($path, '/');
+        $path = $path ?: '/';
+        $path = $path[0] == '/' ? $path :  ('/' . $path);
+        return $path;
+    }
+    
+    public function isDir()
+    {
+        return is_dir($this->path);
+    }
+    
+    public function isFile()
+    {
+        return is_file($this->path);
+    }
+    
+    public function getBasename()
+    {
+        return $this->parts['basename'];
+    }
+    
+    public function getDirname()
+    {
+        return $this->parts['dirname'];
+    }
+    
+    public function getExtension()
+    {
+        return $this->parts['extension'] ?? '';
+    }
+    
+    public function getParent(): ?self
+    {
+        return $this->rootUrl ? null : new FileUrl(preg_replace('#/[^/]+$#', '', $this->url), $this->fileRoot);
+    }
+    
+    public function getSegmentUrls(): array
+    {
+        $segments = array_slice(explode('/', $this->url), 1);
+        $current = '';
+        $urls = [];
+        foreach ($segments as $seg) {
+            $current .= '/' . $seg;
+            $urls[] = new FileUrl($current, $this->fileRoot);
+        }
+        return $urls;
+    }
+    
+    public function __toString()
+    {
+        return $this->url;
     }
     
 }

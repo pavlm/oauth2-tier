@@ -6,7 +6,7 @@ class FileBrowserTest extends TestCase
 {
 
     /**
-     * @dataProvider data_test 
+     * @dataProvider data_of_test 
      */
     public function test($target, $targetDir, $targetFile, $dirContent, $fileContent, $dirError, $fileError)
     {
@@ -15,8 +15,8 @@ class FileBrowserTest extends TestCase
         $b->selectTarget($target);
         $b->readTarget();
         
-        $this->assertEquals($targetDir, $b->targetDir, 'targetDir');
-        $this->assertEquals($targetFile, $b->targetFile, 'targetFile');
+        $this->assertEquals($targetDir, $b->targetDir?->url, 'targetDir');
+        $this->assertEquals($targetFile, $b->targetFile?->getBasename(), 'targetFile');
         $this->assertEquals($dirContent, $b->dirContent, 'dirContent');
         $this->assertEquals($fileContent, $b->fileContent, 'fileContent');
         if ($dirError === false) {
@@ -34,7 +34,7 @@ class FileBrowserTest extends TestCase
         
     }
     
-    public function data_test()
+    public function data_of_test()
     {
         return [
             [
