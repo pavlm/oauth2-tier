@@ -27,6 +27,7 @@ use App\Middleware\AccessLoggerMiddleware;
 use Amp\ByteStream\WritableResourceStream;
 use App\Middleware\ForwardedMiddleware;
 use App\Middleware\XDebugMiddleware;
+use App\Handlers\FileBrowserHandler;
 
 class Application
 {
@@ -66,7 +67,7 @@ class Application
         $router = new Router($server, $logger, $errorHandler);
         $middlewares = [
             new XDebugMiddleware(),
-            new ForwardedMiddleware($this->config->getTrustedForwarderBlocks()),
+            new ForwardedMiddleware($this->config->getTrustedForwarderBlocks(), $logger),
             new AccessLoggerMiddleware(new WritableResourceStream(fopen($this->config->accessLog, 'a'))),
             new ExceptionHandlerMiddleware($errorHandler, $logger),
             new SessionMiddleware(factory: $this->container->get(SessionFactory::class), cookieAttributes: $cookieAttributes),
@@ -81,7 +82,9 @@ class Application
         $router->addRoute('GET', '/oauth2/fail', new StaticRequestHandler('failure', '', 500));
         
         $proxyHandler = $this->container->get(ProxyHandler::class);
-        $router->setFallback(stackMiddleware($proxyHandler, ...$middlewares));
+        $fileHandler = $this->container->get(FileBrowserHandler::class);
+//         $router->setFallback(stackMiddleware($proxyHandler, ...$middlewares));
+        $router->setFallback(stackMiddleware($fileHandler, ...$middlewares));
         
         $server->expose($this->config->httpAddress);
         $server->start($router, $errorHandler);

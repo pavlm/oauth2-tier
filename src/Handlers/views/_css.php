@@ -95,7 +95,7 @@ button:active {
 }
 
 .error {
-    text-color: #d00;
+    color: #d00;
 }
 
 .mb-1 {
@@ -116,4 +116,8 @@ button:active {
 }
 .mr-3 {
     margin-right: var(--gap-3);
+}
+
+.h-100 {
+	height: 100%;
 }

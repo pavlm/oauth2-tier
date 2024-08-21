@@ -126,7 +126,7 @@ class FileUrl
     private function filterPath($path)
     {
         $path = implode('/', array_filter(explode('/', $path), fn ($seg) => $seg !== '..'));
-        $path = preg_replace('#//+#', '', $path);
+        $path = preg_replace('#//+#', '/', $path);
         $path = rtrim($path, '/');
         $path = $path ?: '/';
         $path = $path[0] == '/' ? $path :  ('/' . $path);
@@ -148,6 +148,11 @@ class FileUrl
         return $this->parts['basename'];
     }
     
+    public function getUrlBasename()
+    {
+        return pathinfo($this->url, PATHINFO_BASENAME);
+    }
+    
     public function getDirname()
     {
         return $this->parts['dirname'];
@@ -165,13 +170,14 @@ class FileUrl
     
     public function getSegmentUrls(): array
     {
-        $segments = array_slice(explode('/', $this->url), 1);
+        $segments = $this->rootUrl ? [] : array_slice(explode('/', $this->url), 1);
         $current = '';
         $urls = [];
         foreach ($segments as $seg) {
             $current .= '/' . $seg;
             $urls[] = new FileUrl($current, $this->fileRoot);
         }
+        array_unshift($urls, new FileUrl('/', $this->fileRoot));
         return $urls;
     }
     
