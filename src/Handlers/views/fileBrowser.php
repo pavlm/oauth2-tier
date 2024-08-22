@@ -8,15 +8,34 @@ $text = htmlspecialchars(...);
 <html lang="en" class="h-100">
 <head>
     <meta charset="UTF-8">
-    <title>browser</title>
+    <title><?= $text($browser->targetDir?->url ?: '') ?> index</title>
+    <meta name="generator" content="oauth2-tier">
     <style>
     <?php require '_css.php'; ?>
+    .t-files {
+        margin-left: -2em
+    }
+    .td-link {
+        position: relative;
+        padding-left: 2em;
+    }
+    .hover-link {
+        visibility: hidden;
+    }
+    td:hover .hover-link {
+        visibility: visible;
+    }
+    .f-link {
+        position: absolute;
+        left: 0.5em;
+        text-decoration: none;
+    }
     </style>
 </head>
 <body class="h-100">
 
     <div class='d-flex' style='height: 100%'>
-        <div class='d-flex flex-column' style='width: 35%; padding: 1em;'>
+        <div class='d-flex flex-column' style='width: 35%; padding: 1em 1em 1em 2em;'>
         
             <h1>Index of 
               <?php if ($browser->targetDir): ?>
@@ -30,12 +49,17 @@ $text = htmlspecialchars(...);
             <?php if ($browser->dirError): ?>
             <div class="error"><?= $text($browser->dirError->getMessage()) ?></div>
             <?php else: ?>
-              <table style="width: 100%;">
+              <table class="t-files" style="width: 100%;">
                 <?php $dirUrl = $browser->targetDir->url == '/' ? '' : $browser->targetDir->url ?>
             	<?php foreach ($browser->dirContent as /** @var SplFileInfo $file */ $file): ?>
                 <tr>
-                  <td>
-                  	<a href="<?= $dirUrl . '/' . $file->getFilename() ?>" class="file"><?= $file->isDir() ? '[' . $text($file->getFilename()) . ']' : $text($file->getFilename()) ?></a>
+                  <td class="td-link">
+                    <?php if ($file->isFile()): ?>
+                    <a class="hover-link f-link" href="<?= $dirUrl . '/' . $file->getFilename() ?>">🔗</a>
+                    <?php endif; ?>
+                  	<a href="<?= $dirUrl . '/' . ($file->getFilename() . ($file->isFile() ? '.' . $browser->virtualExtension : '')) ?>" class="file">
+                  	<?= $file->isDir() ? '[' . $text($file->getFilename()) . ']' : $text($file->getFilename()) ?>
+                  	</a>
                   </td>
                   <td>
                     <?= gmdate('Y-m-d H:i:s', $file->getMTime()) ?>
