@@ -60,7 +60,7 @@ make build_image && make up
 Demo application is available as preconfigured docker compose services.
 
 1. Run demo: `make build_image; cd docker/demo; docker compose up -d`
-2. Open proxy page http://192.168.234.2:8191/
+2. Open proxy page [http://192.168.234.2:8191/](http://192.168.234.2:8191/)
 3. Error page (status 401) must be shown.
 4. Follow the `Login` link to http://192.168.234.2:8191/oauth2/sign_in page.
 5. Try to login with keycloak provider using `test` / `test` credentials.
