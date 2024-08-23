@@ -7,7 +7,8 @@ It's similar to oauth2-proxy project.
 ## Features
 
 * Several OAuth providers simultaneously can be used.
-* Uses amphp v3 asynchronous framework, so quite performant.
+* Doesn't require provider to support OIDC as in oauth2-proxy. User email field can be specified in provider configuration.
+* Uses Amphp v3 asynchronous framework, so quite performant.
 * Configuration via env file.
 * File system directory can be exposed via http, otherwise requests go to upstream.
 * File browser has also file viewer panel.
@@ -27,7 +28,7 @@ OA2T_HTTP_ROOT_URL=http://192.168.1.10:8089/  # url with default hostname
 OA2T_POST_LOGIN_URL=                          # if empty then url dynamically detected
 OA2T_UPSTREAM=http://192.168.1.10:8088/       # secured backend (excludes OA2T_INDEX_DIRECTORY)
 OA2T_INDEX_DIRECTORY=                         # instead of http backend a file system dir can be exposed (excludes OA2T_UPSTREAM)
-OA2T_EMAIL_DOMAINS=*                          # allowed user email domains
+OA2T_EMAIL_DOMAINS=*                          # allowed user email domains, comma separated
 OA2T_COOKIE_SECURE=false                      # cookie secure flag 
 OA2T_COOKIE_EXPIRE=PT33H                      # cookie and session duration, in PHP DateInterval format
 OA2T_PROVIDERS='["yandex", "keycloak"]'       # configured OAuth providers
