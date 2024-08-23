@@ -5,6 +5,7 @@ parameters:
     env(OA2T_HTTP_ADDRESS): 0.0.0.0:8088
     env(OA2T_HTTP_ROOT_URL): http://0.0.0.0:8088/
     env(OA2T_UPSTREAM): http://127.0.0.0:80/
+    env(OA2T_INDEX_DIRECTORY): ''
     env(OA2T_EMAIL_DOMAINS): '*'
     env(OA2T_COOKIE_SECURE): 'true'
     env(OA2T_COOKIE_EXPIRE): PT24H
@@ -45,6 +46,7 @@ services:
             httpRootUrl: '%env(OA2T_HTTP_ROOT_URL)%'
             postLoginUrl: '%env(OA2T_POST_LOGIN_URL)%'
             upstream: '%env(OA2T_UPSTREAM)%'
+            indexDirectory: '%env(OA2T_INDEX_DIRECTORY)%'
             emailDomains: '%env(OA2T_EMAIL_DOMAINS)%'
             emailsAllowed: '%env(OA2T_EMAILS_ALLOWED)%'
             cookieExpire: '%env(OA2T_COOKIE_EXPIRE)%'

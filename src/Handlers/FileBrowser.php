@@ -10,7 +10,7 @@ class FileBrowser
     
     public $targetDir;
     public $targetFile;
-    private $directFileLink = false;
+    public $directFileLink = false;
     
     public $dirContent = [];
     public $fileContent;

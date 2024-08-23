@@ -16,6 +16,8 @@ class Config
     
     public string $upstream = 'http://127.0.0.1:80';
     
+    public string $indexDirectory = '';
+    
     public string|array $emailDomains = '*';
     
     public string|array $emailsAllowed = '*';

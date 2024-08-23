@@ -20,9 +20,15 @@ class FileBrowserHandler implements RequestHandler
     {
         $path = $request->getUri()->getPath();
         $root = dirname(__DIR__, 2) . '/tmp';
-        $browser = new FileBrowser($root);
+        $browser = new FileBrowser($this->config->indexDirectory);
         $browser->selectTarget($path);
         $browser->readTarget();
+        
+        if ($browser->directFileLink) {
+            // stream file
+        } else {
+            
+        }
         
         $html = renderPhp(__DIR__ . '/views/fileBrowser.php', ['browser' => $browser]);
         

@@ -83,8 +83,11 @@ class Application
         
         $proxyHandler = $this->container->get(ProxyHandler::class);
         $fileHandler = $this->container->get(FileBrowserHandler::class);
-//         $router->setFallback(stackMiddleware($proxyHandler, ...$middlewares));
-        $router->setFallback(stackMiddleware($fileHandler, ...$middlewares));
+        if ($this->config->upstream) {
+            $router->setFallback(stackMiddleware($proxyHandler, ...$middlewares));
+        } else { // $this->config->indexDirectory
+            $router->setFallback(stackMiddleware($fileHandler, ...$middlewares));
+        }
         
         $server->expose($this->config->httpAddress);
         $server->start($router, $errorHandler);
