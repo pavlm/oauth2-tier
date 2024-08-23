@@ -6,6 +6,7 @@ use Amp\Http\Server\RequestHandler;
 use Amp\Http\Server\Response;
 use App\Config;
 use function App\renderPhp;
+use Amp\ByteStream\ReadableResourceStream;
 
 class FileBrowserHandler implements RequestHandler
 {
@@ -26,8 +27,9 @@ class FileBrowserHandler implements RequestHandler
         
         if ($browser->directFileLink) {
             // stream file
-        } else {
-            
+            $file = fopen($browser->targetFile->path, 'r');
+            $stream = new ReadableResourceStream($file);
+            return new Response(body: $stream, headers: ['content-type' => 'application/octet-stream']);
         }
         
         $html = renderPhp(__DIR__ . '/views/fileBrowser.php', ['browser' => $browser]);

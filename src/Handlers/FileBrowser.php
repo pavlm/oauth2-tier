@@ -40,6 +40,7 @@ class FileBrowser
         }
         
         if ($url1->isFile()) {
+            $this->directFileLink = true;
             $this->targetFile = $url1;
             $this->targetDir = $url1->getParent();
             return;
