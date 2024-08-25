@@ -24,4 +24,10 @@ class ForwardedData
             ($this->proto == 'https' ? 443 : 80);
     }
     
+    public function getFirstAddress()
+    {
+        $list = explode(',', $this->for);
+        return $list[0];
+    }
+
 }

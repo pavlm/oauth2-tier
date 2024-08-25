@@ -35,12 +35,16 @@ final class AccessLoggerMiddleware implements Middleware
         $response = $requestHandler->handleRequest($request);
         
         $user = AuthMiddleware::getRequestUser($request);
+        /** @var ForwardedData $forwardedData */
+        $forwardedData = $request->hasAttribute(ForwardedData::class) ? $request->getAttribute(ForwardedData::class) : null;
+        assert($request->getClient()->getRemoteAddress()->getType() == SocketAddressType::Internet);
+        $clientIp = $forwardedData?->trustedForwarder ? $forwardedData->getFirstAddress() : $request->getClient()->getRemoteAddress()->getAddress();
         
         $record = [];
         foreach ($this->fields as $field) {
             $record[$field] = match ($field) {
                 'time' => $time->format(\DateTime::ISO8601),
-                'ip' => ($request->getClient()->getRemoteAddress()->getType() == SocketAddressType::Internet) ? $request->getClient()->getRemoteAddress()->getAddress() : $request->getClient()->getRemoteAddress(),
+                'ip' => $clientIp,
                 'user' => $user ? ($user->getEmail() ?: $user->getName()) : null,
                 'method' => $request->getMethod(),
                 'uri' => (string)$request->getUri(),
