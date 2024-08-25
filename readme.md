@@ -65,3 +65,26 @@ Demo application is available as preconfigured docker compose services.
 4. Follow the `Login` link to http://192.168.234.2:8191/oauth2/sign_in page.
 5. Try to login with keycloak provider using `test` / `test` credentials.
 6. Backend resources will be available after successful login.
+
+
+## HTTPS setup
+
+Server doesn't support https by itself, but works with https forwarder proxy. Example of nginx forwarder is below.
+
+```
+server {
+    listen 80;
+    listen 443 ssl;
+    server_name example.org;
+    ssl_certificate    example.org.crt;
+    ssl_certificate_key example.org.key;
+    location / {
+        proxy_pass http://127.0.0.1:8089; # oauth2-tier server
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header X-Forwarded-Host $host:$server_port;
+        proxy_set_header connection keep-alive;
+    }
+}
+
+```
