@@ -2,6 +2,7 @@
 use App\Handlers\FileBrowser;
 
 /** @var FileBrowser $browser */
+/** @var string $pathPrefix */
 $text = htmlspecialchars(...);
 ?>
 <!DOCTYPE html>
@@ -40,7 +41,7 @@ $text = htmlspecialchars(...);
             <h1>Index of 
               <?php if ($browser->targetDir): ?>
               <?php foreach ($browser->targetDir->getSegmentUrls() as $i => $segUrl): ?>
-                <?= $i > 1 ? '/' : '' ?> <a href="<?= $segUrl->url ?>"><?= $segUrl->getUrlBasename() ?: '/' ?></a>
+                <?= $i > 1 ? '/' : '' ?> <a href="<?= $pathPrefix . $segUrl->url ?>"><?= $segUrl->getUrlBasename() ?: '/' ?></a>
               <?php endforeach; ?>
               <?php endif; ?>
             </h1>
@@ -56,9 +57,9 @@ $text = htmlspecialchars(...);
                 <tr>
                   <td class="td-link">
                     <?php if ($file->isFile()): ?>
-                    <a class="hover-link f-link" href="<?= $dirUrl . '/' . $file->getFilename() ?>">🔗</a>
+                    <a class="hover-link f-link" href="<?= $pathPrefix . $dirUrl . '/' . $file->getFilename() ?>">🔗</a>
                     <?php endif; ?>
-                  	<a href="<?= $dirUrl . '/' . ($file->getFilename() . ($file->isFile() ? '.' . $browser->virtualExtension : '')) ?>" class="file">
+                  	<a href="<?= $pathPrefix . $dirUrl . '/' . ($file->getFilename() . ($file->isFile() ? '.' . $browser->virtualExtension : '')) ?>" class="file">
                   	<?= $file->isDir() ? '[' . $text($file->getFilename()) . ']' : $text($file->getFilename()) ?>
                   	</a>
                   </td>

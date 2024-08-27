@@ -41,6 +41,11 @@ class Config
         return Uri::new($this->httpRootUrl);
     }
     
+    public function getUrlPathPrefix(): string
+    {
+        return rtrim($this->getHttpRootUrl()->getPath(), '/');
+    }
+    
     public function getPostLoginUrl(): UriInterface
     {
         return Uri::new($this->postLoginUrl);

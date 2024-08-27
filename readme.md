@@ -13,7 +13,7 @@ It's similar to oauth2-proxy project.
 * File system directory can be exposed via http, otherwise requests go to upstream.
 * File browser has also file viewer panel.
 * Some well known providers are available (only two for now).
-* Generic OAuth provider may be configured without coding.
+* Typical OAuth provider may be configured without coding.
 * Multiple host names can be used when it works behind trusted proxy.
 
 ## Configuration
@@ -24,9 +24,9 @@ Copy `.env.example` file to `.env` and change variable values.
 ```
 OA2T_HTTP_PORT=8089                           # external http port of container
 OA2T_HTTP_ADDRESS=0.0.0.0:${OA2T_HTTP_PORT}   # server socket bind address
-OA2T_HTTP_ROOT_URL=http://192.168.1.10:8089/  # url with default hostname
+OA2T_HTTP_ROOT_URL=http://192.168.1.10:8089/  # url with default hostname. Url path can also be specified. So all urls will be mounted to that path.
 OA2T_POST_LOGIN_URL=                          # if empty then url dynamically detected
-OA2T_UPSTREAM=http://192.168.1.10:8088/       # secured backend (excludes OA2T_INDEX_DIRECTORY)
+OA2T_UPSTREAM=http://192.168.1.10:8088/       # secured http backend (excludes OA2T_INDEX_DIRECTORY)
 OA2T_INDEX_DIRECTORY=                         # instead of http backend a file system dir can be exposed (excludes OA2T_UPSTREAM)
 OA2T_EMAIL_DOMAINS=*                          # allowed user email domains, comma separated
 OA2T_COOKIE_SECURE=false                      # cookie secure flag 
@@ -57,7 +57,7 @@ make build_image && make up
 
 ## Demo
 
-Demo application is available as preconfigured docker compose services.
+Demo application is available as preconfigured docker compose services. Authorization goes with Keycloak provider.
 
 1. Run demo: `make build_image; cd docker/demo; docker compose up -d`
 2. Open proxy page [http://192.168.234.2:8191/](http://192.168.234.2:8191/)
@@ -69,7 +69,7 @@ Demo application is available as preconfigured docker compose services.
 
 ## HTTPS setup
 
-Server doesn't support https by itself, but works with https forwarder proxy. Example of nginx forwarder is below.
+Server doesn't support https by itself, but it can works behind https reverse proxy. Example of nginx proxy is below.
 
 ```
 server {
@@ -88,3 +88,16 @@ server {
 }
 
 ```
+
+## Server urls
+
+Following url addresses are available.
+
+```
+/oauth2/sign_in                # Sign in page with provider selection.
+/oauth2/sign_out               # Sign out
+/oauth2/start                  # Page starts OAuth2 sequence with redirect to provider
+/oauth2/callback/{provider}    # OAuth2 callback page
+/ping                          # Health check page. Prints 'pong'.
+```
+All other urls are proxied to http backend or to a file browser depending on config.

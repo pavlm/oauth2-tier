@@ -71,15 +71,19 @@ class Application
             new AccessLoggerMiddleware(new WritableResourceStream(fopen($this->config->accessLog, 'a'))),
             new ExceptionHandlerMiddleware($errorHandler, $logger),
             new SessionMiddleware(factory: $this->container->get(SessionFactory::class), cookieAttributes: $cookieAttributes),
-            new AuthMiddleware($logger),
+            new AuthMiddleware($logger, $this->config),
         ];
         array_map($router->addMiddleware(...), $middlewares);
-        $router->addRoute('GET', '/ping', new StaticRequestHandler('pong'));
-        $router->addRoute('GET', '/oauth2/sign_in', $this->container->get(SignInRequestHandler::class));
-        $router->addRoute('POST', '/oauth2/sign_out', $this->container->get(SignOutRequestHandler::class));
-        $router->addRoute('POST', '/oauth2/start', $this->container->get(StartRequestHandler::class));
-        $router->addRoute('GET', '/oauth2/callback/{provider}', $this->container->get(CallbackRequestHandler::class));
-        $router->addRoute('GET', '/oauth2/fail', new StaticRequestHandler('failure', '', 500));
+        $pathPrefix = $this->config->getUrlPathPrefix();
+        $router->addRoute('GET', $pathPrefix . '/ping', new StaticRequestHandler('pong'));
+        $router->addRoute('GET', $pathPrefix . '/oauth2/sign_in', $this->container->get(SignInRequestHandler::class));
+        $router->addRoute('POST', $pathPrefix . '/oauth2/sign_out', $this->container->get(SignOutRequestHandler::class));
+        $router->addRoute('POST', $pathPrefix . '/oauth2/start', $this->container->get(StartRequestHandler::class));
+        $router->addRoute('GET', $pathPrefix . '/oauth2/callback/{provider}', $this->container->get(CallbackRequestHandler::class));
+        $router->addRoute('GET', $pathPrefix . '/oauth2/fail', new StaticRequestHandler('failure', '', 500));
+        if ($pathPrefix) {
+            $router->addRoute('GET', '/oauth2/callback/{provider}', $this->container->get(CallbackRequestHandler::class));
+        }
         
         $proxyHandler = $this->container->get(ProxyHandler::class);
         $fileHandler = $this->container->get(FileBrowserHandler::class);

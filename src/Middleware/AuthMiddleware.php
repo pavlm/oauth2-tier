@@ -10,6 +10,7 @@ use App\OAuth\IdentityData;
 use Psr\Log\LoggerInterface;
 use Amp\Http\Server\HttpErrorException;
 use League\Uri\BaseUri;
+use App\Config;
 
 class AuthMiddleware implements Middleware
 {
@@ -18,8 +19,11 @@ class AuthMiddleware implements Middleware
     
     const PUBLIC_PATH = '#^(/ping|/oauth2/.*)$#';
     
-    public function __construct(private LoggerInterface $logger)
+    private $pathPrefix = '';
+    
+    public function __construct(private LoggerInterface $logger, private Config $config)
     {
+        $this->pathPrefix = $this->config->getUrlPathPrefix();
     }
     
     public function handleRequest(Request $request, RequestHandler $requestHandler): Response
@@ -36,10 +40,14 @@ class AuthMiddleware implements Middleware
         }
         
         if (!$identity) {
-            if (!preg_match(self::PUBLIC_PATH, $request->getUri()->getPath())) {
+            $path = $request->getUri()->getPath();
+            if (0 === strpos($path, $this->pathPrefix)) {
+                $path = substr($path, strlen($this->pathPrefix)); // ignore prefix
+            }
+            if (!preg_match(self::PUBLIC_PATH, $path)) {
                 $root = BaseUri::from($request->getUri())->origin();
                 $redirectUrl = '/' . $root->relativize($request->getUri())->getUriString();
-                $link = sprintf('<a href="/oauth2/sign_in?redirect_url=%s">Login</a>', urlencode($redirectUrl));
+                $link = sprintf('<a href="%s/oauth2/sign_in?redirect_url=%s">Login</a>', $this->pathPrefix, urlencode($redirectUrl));
                 throw new HttpErrorException(401, 'Not authorized. ' . $link);
             }
         }

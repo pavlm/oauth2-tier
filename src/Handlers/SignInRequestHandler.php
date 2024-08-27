@@ -8,12 +8,14 @@ use App\OAuth\ProviderRegistry;
 use function App\renderPhp;
 use Amp\Http\Server\Session\Session;
 use App\Middleware\AuthMiddleware;
+use App\Config;
 
 class SignInRequestHandler implements RequestHandler
 {
     
     public function __construct(
         private ProviderRegistry $registry,
+        private Config $config,
     )
     {
     }
@@ -24,7 +26,9 @@ class SignInRequestHandler implements RequestHandler
         
         $user = AuthMiddleware::getRequestUser($request);
 
-        $html = renderPhp(__DIR__ . '/views/signIn.php', ['providers' => $providers, 'user' => $user, 'request' => $request]);
+        $html = renderPhp(__DIR__ . '/views/signIn.php', [
+            'providers' => $providers, 'user' => $user, 'request' => $request, 'pathPrefix' => $this->config->getUrlPathPrefix(),
+        ]);
         
         return new Response(200, [
             "content-type" => "text/html; charset=utf-8"

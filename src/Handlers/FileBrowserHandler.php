@@ -7,6 +7,7 @@ use Amp\Http\Server\Response;
 use App\Config;
 use function App\renderPhp;
 use Amp\ByteStream\ReadableResourceStream;
+use Amp\Http\Server\HttpErrorException;
 
 class FileBrowserHandler implements RequestHandler
 {
@@ -20,7 +21,14 @@ class FileBrowserHandler implements RequestHandler
     public function handleRequest(Request $request): Response
     {
         $path = $request->getUri()->getPath();
-        $root = dirname(__DIR__, 2) . '/tmp';
+        $pathPrefix = $this->config->getUrlPathPrefix();
+        if ($pathPrefix) { // remove prefix
+            $prefix = substr($path, 0, strlen($pathPrefix));
+            if ($prefix !== $pathPrefix) {
+                throw new HttpErrorException(404);
+            }
+            $path = substr($path, strlen($pathPrefix));
+        }
         $browser = new FileBrowser($this->config->indexDirectory);
         $browser->selectTarget($path);
         $browser->readTarget();
@@ -31,9 +39,9 @@ class FileBrowserHandler implements RequestHandler
             $stream = new ReadableResourceStream($file);
             return new Response(body: $stream, headers: ['content-type' => 'application/octet-stream']);
         }
-        
-        $html = renderPhp(__DIR__ . '/views/fileBrowser.php', ['browser' => $browser]);
-        
+
+        $html = renderPhp(__DIR__ . '/views/fileBrowser.php', ['browser' => $browser, 'pathPrefix' => $pathPrefix]);
+
         return new Response(body: $html);
     }
     

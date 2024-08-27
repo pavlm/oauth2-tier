@@ -49,9 +49,9 @@ class CallbackRequestHandler implements RequestHandler
         if (!$redirectUrl) {
             /** @var Session $session */
             $session = $request->getAttribute(Session::class);
-            $url = $session->has('redirectUrl') ? $session->get('redirectUrl') : '/';
+            $url = $session->has('redirectUrl') ? $session->get('redirectUrl') : ($this->config->getUrlPathPrefix() . '/');
             $isAbsolute = preg_match('#^\w+://#', $url);
-            $redirectUrl = $isAbsolute ? '/' : $url;
+            $redirectUrl = $isAbsolute ? ($this->config->getUrlPathPrefix() . '/') : $url;
         }
         
         return responseWithRedirect($redirectUrl);

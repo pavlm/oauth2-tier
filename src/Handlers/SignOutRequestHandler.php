@@ -6,9 +6,13 @@ use Amp\Http\Server\RequestHandler;
 use Amp\Http\Server\Response;
 use Amp\Http\Server\Session\Session;
 use function App\responseWithRedirect;
+use App\Config;
 
 class SignOutRequestHandler implements RequestHandler
 {
+    public function __construct(private Config $config)
+    {
+    }
     
     public function handleRequest(Request $request): Response
     {
@@ -17,7 +21,7 @@ class SignOutRequestHandler implements RequestHandler
         $session->lock();
         $session->destroy();
         
-        return responseWithRedirect('/oauth2/sign_in');
+        return responseWithRedirect($this->config->getUrlPathPrefix() . '/oauth2/sign_in');
     }
     
 }
