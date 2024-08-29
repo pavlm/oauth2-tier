@@ -8,6 +8,13 @@ services:
     _defaults:
         public: true
 
+    google:
+        class: App\OAuth\Providers\GoogleProvider
+        arguments:
+            $httpClient: '@Amp\Http\Client\HttpClient'
+            $clientId: '%env(OA2T_PROVIDERS_GOOGLE_CLIENT_ID)%'
+            $clientSecret: '%env(OA2T_PROVIDERS_GOOGLE_CLIENT_SECRET)%'
+
     keycloak:
         class: App\OAuth\Providers\KeycloakProvider
         arguments:
@@ -24,14 +31,3 @@ services:
             $clientId: '%env(default:empty:OA2T_PROVIDERS_YANDEX_CLIENT_ID)%'
             $clientSecret: '%env(default:empty:OA2T_PROVIDERS_YANDEX_CLIENT_SECRET)%'
 
-
-#    google:
-#        class: App\OAuth\Providers\GenericProvider
-#        arguments:
-#            $httpClient: '@Amp\Http\Client\HttpClient'
-#            $redirectUri: '%env(OA2T_HTTP_ROOT_URL)%oauth2/callback/google'
-#            $authorizationUrl: ''
-#            $accessTokenUrl: ''
-#            $clientId: '%env(default:empty:OA2T_PROVIDERS_GOOGLE_CLIENT_ID)%'
-#            $clientSecret: '%env(default:empty:OA2T_PROVIDERS_GOOGLE_CLIENT_SECRET)%'
-#            $name: 'Google'

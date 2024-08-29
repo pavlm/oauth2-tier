@@ -12,7 +12,7 @@ It's similar to oauth2-proxy project.
 * Configuration via env file.
 * File system directory can be exposed via http, otherwise requests go to upstream.
 * File browser has also file viewer panel.
-* Some well known providers are available (only two for now).
+* Some well known providers are available (only three for now).
 * Typical OAuth provider may be configured without coding.
 * Multiple host names can be used when it works behind trusted proxy.
 
@@ -31,12 +31,15 @@ OA2T_INDEX_DIRECTORY=                         # instead of http backend a file s
 OA2T_EMAIL_DOMAINS=*                          # allowed user email domains, comma separated
 OA2T_COOKIE_SECURE=false                      # cookie secure flag 
 OA2T_COOKIE_EXPIRE=PT33H                      # cookie and session duration, in PHP DateInterval format
-OA2T_PROVIDERS='["yandex", "keycloak"]'       # configured OAuth providers
+OA2T_PROVIDERS='["google", "yandex", "keycloak"]' # configured OAuth providers
 OA2T_TRUSTED_FORWARDERS=127.0.0.0/8,172.16.0.0/12,192.168.0.0/16 # accept forwarded-x http headers from these proxies
 OA2T_ACCESS_LOG=./access.log                  # access log file name
 OA2T_APP_LOG=php://stdout                     # application log file name
 
 ## OAuth2 providers configuration
+
+OA2T_PROVIDERS_GOOGLE_CLIENT_ID=
+OA2T_PROVIDERS_GOOGLE_CLIENT_SECRET=
 
 OA2T_PROVIDERS_KEYCLOAK_CLIENT_ID=
 OA2T_PROVIDERS_KEYCLOAK_CLIENT_SECRET=
