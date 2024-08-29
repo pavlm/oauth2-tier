@@ -47,11 +47,12 @@ $text = htmlspecialchars(...);
             </h1>
             <hr style='margin: 1px 0;'>
             
+            <div class="mb-3" style="flex-grow: 1">
             <?php if ($browser->dirError): ?>
             <div class="error"><?= $text($browser->dirError->getMessage()) ?></div>
             <div class="error">Try to browse <a href="/">/</a></div>
             <?php else: ?>
-              <table class="t-files" style="width: 100%;">
+              <table class="t-files" style="width: 100%">
                 <?php $dirUrl = $browser->targetDir->url == '/' ? '' : $browser->targetDir->url ?>
             	<?php foreach ($browser->dirContent as /** @var SplFileInfo $file */ $file): ?>
                 <tr>
@@ -73,6 +74,10 @@ $text = htmlspecialchars(...);
                 <?php endforeach; ?>
           	  </table>
             <?php endif; ?>
+            </div>
+            <div class="mb-3">
+              <a href="<?= $pathPrefix ?>/oauth2/sign_in" title="user info">👤</a>
+            </div>
         </div>
         
         <div class='d-flex flex-column' style='width: 65%; padding: 1em'>

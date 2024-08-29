@@ -52,7 +52,7 @@ li::before {
     content: '- ';
 }
 
-button {
+button, .button {
     box-sizing: content-box;
     display: block;
     background: var(--primary-color);

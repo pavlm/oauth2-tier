@@ -28,10 +28,10 @@ OA2T_HTTP_ROOT_URL=http://192.168.1.10:8089/  # url with default hostname. Url p
 OA2T_POST_LOGIN_URL=                          # if empty then url dynamically detected
 OA2T_UPSTREAM=http://192.168.1.10:8088/       # secured http backend (excludes OA2T_INDEX_DIRECTORY)
 OA2T_INDEX_DIRECTORY=                         # instead of http backend a file system dir can be exposed (excludes OA2T_UPSTREAM)
-OA2T_EMAIL_DOMAINS=*                          # allowed user email domains, comma separated
+OA2T_EMAIL_DOMAINS=*                          # allowed user email domains, comma separated values
 OA2T_COOKIE_SECURE=false                      # cookie secure flag 
 OA2T_COOKIE_EXPIRE=PT33H                      # cookie and session duration, in PHP DateInterval format
-OA2T_PROVIDERS='["google", "yandex", "keycloak"]' # configured OAuth providers
+OA2T_PROVIDERS='["google", "yandex", "keycloak"]' # configured OAuth providers. Provider identifiers in json array
 OA2T_TRUSTED_FORWARDERS=127.0.0.0/8,172.16.0.0/12,192.168.0.0/16 # accept forwarded-x http headers from these proxies
 OA2T_ACCESS_LOG=./access.log                  # access log file name
 OA2T_APP_LOG=php://stdout                     # application log file name
@@ -57,6 +57,16 @@ OA2T_PROVIDERS_YANDEX_CLIENT_SECRET=
 ```
 make build_image && make up
 ```
+
+## OAuth2 clients setup
+
+* For each required OAuth provider register client with redirect url.  
+Redirect page address is `https://<oauth2-tier-host>/oauth2/callback/<provider>`, 
+where `<provider>` is an identifier of provider in `providers.yaml` file.  
+Note: some providers support insecure http protocol and LAN host ip addresses.
+* Edit `OA2T_PROVIDERS`, `OA2T_PROVIDERS_*_CLIENT_ID`, `OA2T_PROVIDERS_*_CLIENT_SECRET` env variables.
+* Restart application: `make reup`.
+
 
 ## Demo
 
@@ -100,7 +110,7 @@ Following url addresses are available.
 /oauth2/sign_in                # Sign in page with provider selection.
 /oauth2/sign_out               # Sign out
 /oauth2/start                  # Page starts OAuth2 sequence with redirect to provider
-/oauth2/callback/{provider}    # OAuth2 callback page
+/oauth2/callback/{provider}    # OAuth2 redirect page. For google it will be https://<your-host>/oauth2/callback/google
 /ping                          # Health check page. Prints 'pong'.
 ```
 All other urls are proxied to http backend or to a file browser depending on config.

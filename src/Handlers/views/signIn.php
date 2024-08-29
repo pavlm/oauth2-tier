@@ -26,7 +26,7 @@ use Amp\Http\Server\Request;
     </style>
 </head>
 <body>
-	<div>
+	<div style="max-width: 400px;">
         <div class="box">
             <header>
                 <h1><?= $title ?? 'OAuth2 tier (proxy)' ?></h1>
@@ -49,6 +49,10 @@ use Amp\Http\Server\Request;
             	</div>
             	<button type="submit">logout</button>
             </form>
+        </div>
+        <div class="mb-3"></div>
+        <div class="box" style="background: none; box-shadow: none; text-align: center;">
+        	service root: <a href="<?= $pathPrefix ?>"><?= $pathPrefix ?></a>
         </div>
         <?php endif; ?>
     </div>

@@ -25,7 +25,7 @@ class FileBrowserHandler implements RequestHandler
         if ($pathPrefix) { // remove prefix
             $prefix = substr($path, 0, strlen($pathPrefix));
             if ($prefix !== $pathPrefix) {
-                throw new HttpErrorException(404);
+                throw new HttpErrorException(404, "Not found. Try service root page: <a href='{$pathPrefix}'>{$pathPrefix}</a>.");
             }
             $path = substr($path, strlen($pathPrefix));
         }
