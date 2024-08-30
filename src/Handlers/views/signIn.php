@@ -52,7 +52,7 @@ use Amp\Http\Server\Request;
         </div>
         <div class="mb-3"></div>
         <div class="box" style="background: none; box-shadow: none; text-align: center;">
-        	service root: <a href="<?= $pathPrefix ?>"><?= $pathPrefix ?></a>
+        	service root: <a href="<?= $pathPrefix ?: '/' ?>"><?= $pathPrefix ?: '/' ?></a>
         </div>
         <?php endif; ?>
     </div>

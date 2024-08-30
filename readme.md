@@ -102,9 +102,9 @@ server {
 
 ```
 
-## Server urls
+## Server endpoints
 
-Following url addresses are available.
+Following url endpoints are available.
 
 ```
 /oauth2/sign_in                # Sign in page with provider selection.

@@ -12,8 +12,8 @@ services:
         class: App\OAuth\Providers\GoogleProvider
         arguments:
             $httpClient: '@Amp\Http\Client\HttpClient'
-            $clientId: '%env(OA2T_PROVIDERS_GOOGLE_CLIENT_ID)%'
-            $clientSecret: '%env(OA2T_PROVIDERS_GOOGLE_CLIENT_SECRET)%'
+            $clientId: '%env(default:empty:OA2T_PROVIDERS_GOOGLE_CLIENT_ID)%'
+            $clientSecret: '%env(default:empty:OA2T_PROVIDERS_GOOGLE_CLIENT_SECRET)%'
 
     keycloak:
         class: App\OAuth\Providers\KeycloakProvider
