@@ -1,4 +1,4 @@
-FROM php:8.1 AS base
+FROM php:8.1.29 AS base
 
 COPY --from=composer:2.6 /usr/bin/composer /usr/bin/composer
 

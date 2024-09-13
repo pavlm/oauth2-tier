@@ -50,7 +50,7 @@ $text = htmlspecialchars(...);
             <div class="mb-3" style="flex-grow: 1">
             <?php if ($browser->dirError): ?>
             <div class="error"><?= $text($browser->dirError->getMessage()) ?></div>
-            <div class="error">Try to browse <a href="/">/</a></div>
+            <div class="error">Try to browse <a href="<?= $pathPrefix . '/' ?>">/</a></div>
             <?php else: ?>
               <table class="t-files" style="width: 100%">
                 <?php $dirUrl = $browser->targetDir->url == '/' ? '' : $browser->targetDir->url ?>
