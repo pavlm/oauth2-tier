@@ -4,8 +4,8 @@ imports:
 parameters:
     env(OA2T_HTTP_ADDRESS): 0.0.0.0:8088
     env(OA2T_HTTP_ROOT_URL): http://0.0.0.0:8088/
-    env(OA2T_UPSTREAM): http://127.0.0.0:80/
-    env(OA2T_INDEX_DIRECTORY): ''
+    env(OA2T_LOCATIONS): '[ ["/", "proxy", "http://172.17.0.1:80"] ]'
+    env(OA2T_ACCESS_CONTROL): '{"/": true}'
     env(OA2T_EMAIL_DOMAINS): '*'
     env(OA2T_COOKIE_SECURE): 'true'
     env(OA2T_COOKIE_EXPIRE): PT24H
@@ -39,14 +39,14 @@ services:
     App\Symfony\:
         resource: '../src/Symfony/*'
 
-    App\Config:
-        class: App\Config
+    App\Config\Config:
+        class: App\Config\Config
         properties:
             httpAddress: '%env(OA2T_HTTP_ADDRESS)%'
             httpRootUrl: '%env(OA2T_HTTP_ROOT_URL)%'
             postLoginUrl: '%env(OA2T_POST_LOGIN_URL)%'
-            upstream: '%env(OA2T_UPSTREAM)%'
-            indexDirectory: '%env(OA2T_INDEX_DIRECTORY)%'
+            locations: '%env(json:OA2T_LOCATIONS)%'
+            accessControl: '%env(json:OA2T_ACCESS_CONTROL)%'
             emailDomains: '%env(OA2T_EMAIL_DOMAINS)%'
             emailsAllowed: '%env(OA2T_EMAILS_ALLOWED)%'
             cookieExpire: '%env(OA2T_COOKIE_EXPIRE)%'
@@ -105,5 +105,5 @@ services:
     session_storage:
         class: Amp\Http\Server\Session\LocalSessionStorage
         arguments:
-            $sessionLifetime: '@=service("App\\Config").getCookieMaxAge()'
-        
+            $sessionLifetime: '@=service("App\\Config\\Config").getCookieMaxAge()'
+

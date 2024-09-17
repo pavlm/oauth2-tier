@@ -10,7 +10,7 @@ use App\OAuth\IdentityData;
 use Psr\Log\LoggerInterface;
 use App\Middleware\AuthMiddleware;
 use App\AccessControl;
-use App\Config;
+use App\Config\Config;
 use function App\responseWithRedirect;
 use Amp\Http\Server\Session\Session;
 

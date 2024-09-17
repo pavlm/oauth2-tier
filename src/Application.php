@@ -1,6 +1,7 @@
 <?php
 namespace App;
 
+use App\Config\Config;
 use Amp\Log\StreamHandler;
 use Monolog\Processor\PsrLogMessageProcessor;
 use Amp\Log\ConsoleFormatter;
@@ -13,13 +14,12 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use App\Handlers\SignInRequestHandler;
 use App\Handlers\CallbackRequestHandler;
 use App\Handlers\StartRequestHandler;
-use App\Handlers\ProxyHandler;
 use App\Middleware\ExceptionHandlerMiddleware;
 use Amp\Http\Server\Session\SessionMiddleware;
 use Amp\Http\Cookie\CookieAttributes;
 use App\Middleware\AuthMiddleware;
 use function Amp\Http\Server\Middleware\stackMiddleware;
-use App\Handlers\StaticRequestHandler;
+use App\Handlers\ConstRequestHandler;
 use App\Handlers\SignOutRequestHandler;
 use Amp\Http\Server\Session\SessionFactory;
 use Monolog\Formatter\JsonFormatter;
@@ -27,7 +27,7 @@ use App\Middleware\AccessLoggerMiddleware;
 use Amp\ByteStream\WritableResourceStream;
 use App\Middleware\ForwardedMiddleware;
 use App\Middleware\XDebugMiddleware;
-use App\Handlers\FileBrowserHandler;
+use App\Handlers\LocationHandler;
 
 class Application
 {
@@ -71,26 +71,27 @@ class Application
             new AccessLoggerMiddleware(new WritableResourceStream(fopen($this->config->accessLog, 'a'))),
             new ExceptionHandlerMiddleware($errorHandler, $logger),
             new SessionMiddleware(factory: $this->container->get(SessionFactory::class), cookieAttributes: $cookieAttributes),
-            new AuthMiddleware($logger, $this->config),
+            //new AuthMiddleware($logger, $this->config),
         ];
         array_map($router->addMiddleware(...), $middlewares);
         $pathPrefix = $this->config->getUrlPathPrefix();
-        $router->addRoute('GET', $pathPrefix . '/ping', new StaticRequestHandler('pong'));
+        $router->addRoute('GET', $pathPrefix . '/ping', new ConstRequestHandler('pong'));
         $router->addRoute('GET', $pathPrefix . '/oauth2/sign_in', $this->container->get(SignInRequestHandler::class));
         $router->addRoute('POST', $pathPrefix . '/oauth2/sign_out', $this->container->get(SignOutRequestHandler::class));
         $router->addRoute('POST', $pathPrefix . '/oauth2/start', $this->container->get(StartRequestHandler::class));
         $router->addRoute('GET', $pathPrefix . '/oauth2/callback/{provider}', $this->container->get(CallbackRequestHandler::class));
-        $router->addRoute('GET', $pathPrefix . '/oauth2/fail', new StaticRequestHandler('failure', '', 500));
+        $router->addRoute('GET', $pathPrefix . '/oauth2/fail', new ConstRequestHandler('failure', '', 500));
         if ($pathPrefix) {
             $router->addRoute('GET', '/oauth2/callback/{provider}', $this->container->get(CallbackRequestHandler::class));
         }
-        
-        $proxyHandler = $this->container->get(ProxyHandler::class);
-        $fileHandler = $this->container->get(FileBrowserHandler::class);
-        if ($this->config->upstream) {
-            $router->setFallback(stackMiddleware($proxyHandler, ...$middlewares));
-        } else { // $this->config->indexDirectory
-            $router->setFallback(stackMiddleware($fileHandler, ...$middlewares));
+
+        foreach ($this->config->getLocations() as $location) {
+            $class = $location->handlerType->handlerClass();
+            $handler = $this->container->get($class);
+            assert($handler instanceof LocationHandler);
+            $handler->setLocationConfig($location);
+            $route = $location->location . '{_rest:.*}';
+            $router->addRoute('*', $route, $handler);
         }
         
         $server->expose($this->config->httpAddress);

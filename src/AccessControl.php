@@ -1,6 +1,7 @@
 <?php
 namespace App;
 
+use App\Config\Config;
 use App\OAuth\Identity;
 use Amp\Http\Server\HttpErrorException;
 

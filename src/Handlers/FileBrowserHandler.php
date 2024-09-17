@@ -4,13 +4,16 @@ namespace App\Handlers;
 use Amp\Http\Server\Request;
 use Amp\Http\Server\RequestHandler;
 use Amp\Http\Server\Response;
-use App\Config;
+use App\Config\Config;
 use function App\renderPhp;
 use Amp\ByteStream\ReadableResourceStream;
 use Amp\Http\Server\HttpErrorException;
+use Symfony\Component\DependencyInjection\Attribute\Autoconfigure;
 
-class FileBrowserHandler implements RequestHandler
+#[Autoconfigure(shared: false)]
+class FileBrowserHandler implements RequestHandler, LocationHandler
 {
+    use LocationHandlerTrait;
     
     public function __construct(
         private Config $config,
@@ -22,6 +25,7 @@ class FileBrowserHandler implements RequestHandler
     {
         $path = $request->getUri()->getPath();
         $pathPrefix = $this->config->getUrlPathPrefix();
+        $pathPrefix = rtrim($pathPrefix . $this->locationConfig->location, '/');
         if ($pathPrefix) { // remove prefix
             $prefix = substr($path, 0, strlen($pathPrefix));
             if ($prefix !== $pathPrefix) {
@@ -29,7 +33,7 @@ class FileBrowserHandler implements RequestHandler
             }
             $path = substr($path, strlen($pathPrefix));
         }
-        $browser = new FileBrowser($this->config->indexDirectory);
+        $browser = new FileBrowser(rootDir: $this->locationConfig->target);
         $browser->selectTarget($path);
         $browser->readTarget();
         

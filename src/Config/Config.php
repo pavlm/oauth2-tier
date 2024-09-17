@@ -1,5 +1,5 @@
 <?php
-namespace App;
+namespace App\Config;
 
 use League\Uri\Http as Uri;
 use Psr\Http\Message\UriInterface;
@@ -14,9 +14,15 @@ class Config
     
     public string $postLoginUrl = '/';
     
-    public string $upstream = 'http://127.0.0.1:80';
+    public array $locations = [
+        ['/browser', 'browser', '/var/log'],
+        ['/', 'proxy', 'http://172.17.0.1:80'],
+    ];
     
-    public string $indexDirectory = '';
+    public array $accessControl = [
+        '/' => true,
+        '/public' => false,
+    ];
     
     public string|array $emailDomains = '*';
     
@@ -36,6 +42,10 @@ class Config
     
     private $trustedForwarderBlocks;
     
+    private $locationsCache;
+    
+    private $accessControlRulesCache;
+    
     public function getHttpRootUrl(): UriInterface
     {
         return Uri::new($this->httpRootUrl);
@@ -49,17 +59,6 @@ class Config
     public function getPostLoginUrl(): UriInterface
     {
         return Uri::new($this->postLoginUrl);
-    }
-    
-    public function getUpstreamHost()
-    {
-        return parse_url($this->upstream, PHP_URL_HOST);
-    }
-    
-    public function getUpstreamPort()
-    {
-        $port = parse_url($this->upstream, PHP_URL_PORT);
-        return is_numeric($port) ? $port : 80;
     }
     
     public function getEmailDomains(): array
@@ -94,6 +93,22 @@ class Config
     public function getTrustedForwarderBlocks(): array
     {
         return $this->trustedForwarderBlocks ??= array_map(fn ($block) => IpBlock::createFromCidr($block), $this->getTrustedForwarders());
+    }
+    
+    /**
+     * @return LocationConfig[]
+     */
+    public function getLocations(): array
+    {
+        return $this->locationsCache ??= array_map(fn ($config) => new LocationConfig(...[$config[0], HandlerType::from($config[1]), $config[2], $config[3] ?? null]), $this->locations);
+    }
+    
+    /**
+     * @return AccessControlRule[]
+     */
+    public function getAccessControlRules(): array
+    {
+        return $this->accessControlRulesCache ??= array_map(fn ($location, $auth) => new AccessControlRule($location, $auth), array_keys($this->accessControl), $this->accessControl);
     }
     
 }

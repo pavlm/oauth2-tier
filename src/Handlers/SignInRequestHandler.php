@@ -8,7 +8,7 @@ use App\OAuth\ProviderRegistry;
 use function App\renderPhp;
 use Amp\Http\Server\Session\Session;
 use App\Middleware\AuthMiddleware;
-use App\Config;
+use App\Config\Config;
 
 class SignInRequestHandler implements RequestHandler
 {

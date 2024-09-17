@@ -5,7 +5,7 @@ use Amp\Http\Server\Request;
 use Amp\Http\Server\RequestHandler;
 use Amp\Http\Server\Response;
 
-class StaticRequestHandler implements RequestHandler
+class ConstRequestHandler implements RequestHandler
 {
     
     public function __construct(

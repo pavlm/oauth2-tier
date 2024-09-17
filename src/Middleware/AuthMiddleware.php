@@ -10,7 +10,7 @@ use App\OAuth\IdentityData;
 use Psr\Log\LoggerInterface;
 use Amp\Http\Server\HttpErrorException;
 use League\Uri\BaseUri;
-use App\Config;
+use App\Config\Config;
 
 class AuthMiddleware implements Middleware
 {

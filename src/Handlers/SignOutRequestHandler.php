@@ -6,7 +6,7 @@ use Amp\Http\Server\RequestHandler;
 use Amp\Http\Server\Response;
 use Amp\Http\Server\Session\Session;
 use function App\responseWithRedirect;
-use App\Config;
+use App\Config\Config;
 
 class SignOutRequestHandler implements RequestHandler
 {

@@ -2,7 +2,7 @@
 namespace App\OAuth;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use App\Config;
+use App\Config\Config;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use App\OAuth\Providers\GenericProvider;
 use Psr\Http\Message\UriInterface;
