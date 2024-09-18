@@ -13,6 +13,7 @@ use Amp\Http\Server\HttpErrorException;
 #[Autoconfigure(shared: false)]
 class PhpRequestHandler implements RequestHandler, LocationHandler
 {
+    use RequestHandlerTrait;
 
     private ?LocationConfig $locationConfig = null;
     
@@ -39,15 +40,10 @@ class PhpRequestHandler implements RequestHandler, LocationHandler
             return new Response(200, [], $body);
         }
     
-        $uri = $request->getUri();
-        $path = $uri->getPath();
-        $pathPrefix = $this->config->getUrlPathPrefix();
-        $pathPrefix = rtrim($pathPrefix . $this->locationConfig->location, '/');
-        if (!str_starts_with($path, $pathPrefix)) {
+        $path = $this->getInternalPath($request->getUri());
+        if (null === $path) {
             throw new \Exception('wrong url');
         }
-        $path = substr($path, strlen($pathPrefix));
-        $path = filterUrlPath($path);
         $filePath = $this->locationConfig->target . '/' . ltrim($path, '/');
         if (!file_exists($filePath)) {
             throw new HttpErrorException(404);
@@ -60,11 +56,4 @@ class PhpRequestHandler implements RequestHandler, LocationHandler
         return new Response(200, [], $body);
     }
 
-}
-
-function filterUrlPath($path)
-{
-    $path = implode('/', array_filter(explode('/', $path), fn ($seg) => $seg !== '..'));
-    $path = preg_replace('#//+#', '/', $path);
-    return $path;
 }

@@ -14,25 +14,21 @@ use Symfony\Component\DependencyInjection\Attribute\Autoconfigure;
 class FileBrowserHandler implements RequestHandler, LocationHandler
 {
     use LocationHandlerTrait;
+    use RequestHandlerTrait;
     
     public function __construct(
         private Config $config,
-    )
-    {
+    ) {
     }
     
     public function handleRequest(Request $request): Response
     {
-        $path = $request->getUri()->getPath();
-        $basePathPrefix = $this->config->getUrlPathPrefix();
-        $pathPrefix = rtrim($basePathPrefix . $this->locationConfig->location, '/');
-        if ($pathPrefix) { // remove prefix
-            $prefix = substr($path, 0, strlen($pathPrefix));
-            if ($prefix !== $pathPrefix) {
-                throw new HttpErrorException(404, "Not found. Try service root page: <a href='{$pathPrefix}'>{$pathPrefix}</a>.");
-            }
-            $path = substr($path, strlen($pathPrefix));
+        $pathPrefix = $this->getLocationPathPrefix();
+        $path = $this->getInternalPath($request->getUri());
+        if (null === $path) {
+            throw new HttpErrorException(404, "Not found. Try service root page: <a href='{$pathPrefix}'>{$pathPrefix}</a>.");
         }
+        
         $browser = new FileBrowser(rootDir: $this->locationConfig->target);
         $browser->selectTarget($path);
         $browser->readTarget();
@@ -44,7 +40,7 @@ class FileBrowserHandler implements RequestHandler, LocationHandler
             return new Response(body: $stream, headers: ['content-type' => 'application/octet-stream']);
         }
 
-        $html = renderPhp(__DIR__ . '/views/fileBrowser.php', ['browser' => $browser, 'pathPrefix' => $pathPrefix, 'basePathPrefix' => $basePathPrefix]);
+        $html = renderPhp(__DIR__ . '/views/fileBrowser.php', ['browser' => $browser, 'pathPrefix' => $pathPrefix, 'basePathPrefix' => $this->config->getUrlPathPrefix()]);
 
         return new Response(body: $html);
     }
