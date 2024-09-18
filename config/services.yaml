@@ -107,3 +107,5 @@ services:
         arguments:
             $sessionLifetime: '@=service("App\\Config\\Config").getCookieMaxAge()'
 
+    Mimey\MimeTypes:
+        class: Mimey\MimeTypes
