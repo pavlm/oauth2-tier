@@ -3,6 +3,7 @@ namespace App\Config;
 
 use App\Handlers\ProxyHandler;
 use App\Handlers\FileBrowserHandler;
+use App\Handlers\PhpRequestHandler;
 
 enum HandlerType: string
 {
@@ -17,7 +18,7 @@ enum HandlerType: string
             static::Proxy => ProxyHandler::class,
             static::Browser => FileBrowserHandler::class,
             static::Statics => '',
-            static::Php => '',
+            static::Php => PhpRequestHandler::class,
         };
     }
     

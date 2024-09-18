@@ -100,7 +100,7 @@ class Config
      */
     public function getLocations(): array
     {
-        return $this->locationsCache ??= array_map(fn ($config) => new LocationConfig(...[$config[0], HandlerType::from($config[1]), $config[2], $config[3] ?? null]), $this->locations);
+        return $this->locationsCache ??= array_map(fn ($config) => LocationConfig::createForConfig($config), $this->locations);
     }
     
     /**

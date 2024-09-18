@@ -90,7 +90,7 @@ class Application
             $handler = $this->container->get($class);
             assert($handler instanceof LocationHandler);
             $handler->setLocationConfig($location);
-            $route = $location->location . '{_rest:.*}';
+            $route = $pathPrefix . $location->getLocationRoute();
             $router->addRoute('*', $route, $handler);
         }
         
