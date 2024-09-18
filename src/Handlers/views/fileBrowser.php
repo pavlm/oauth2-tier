@@ -3,6 +3,7 @@ use App\Handlers\FileBrowser;
 
 /** @var FileBrowser $browser */
 /** @var string $pathPrefix */
+/** @var string $basePathPrefix */
 $text = htmlspecialchars(...);
 ?>
 <!DOCTYPE html>
@@ -76,7 +77,7 @@ $text = htmlspecialchars(...);
             <?php endif; ?>
             </div>
             <div class="mb-3">
-              <a href="<?= $pathPrefix ?>/oauth2/sign_in" title="user info">👤</a>
+              <a href="<?= $basePathPrefix ?>/oauth2/sign_in" title="user info">👤</a>
             </div>
         </div>
         

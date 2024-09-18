@@ -24,8 +24,8 @@ class FileBrowserHandler implements RequestHandler, LocationHandler
     public function handleRequest(Request $request): Response
     {
         $path = $request->getUri()->getPath();
-        $pathPrefix = $this->config->getUrlPathPrefix();
-        $pathPrefix = rtrim($pathPrefix . $this->locationConfig->location, '/');
+        $basePathPrefix = $this->config->getUrlPathPrefix();
+        $pathPrefix = rtrim($basePathPrefix . $this->locationConfig->location, '/');
         if ($pathPrefix) { // remove prefix
             $prefix = substr($path, 0, strlen($pathPrefix));
             if ($prefix !== $pathPrefix) {
@@ -44,7 +44,7 @@ class FileBrowserHandler implements RequestHandler, LocationHandler
             return new Response(body: $stream, headers: ['content-type' => 'application/octet-stream']);
         }
 
-        $html = renderPhp(__DIR__ . '/views/fileBrowser.php', ['browser' => $browser, 'pathPrefix' => $pathPrefix]);
+        $html = renderPhp(__DIR__ . '/views/fileBrowser.php', ['browser' => $browser, 'pathPrefix' => $pathPrefix, 'basePathPrefix' => $basePathPrefix]);
 
         return new Response(body: $html);
     }
