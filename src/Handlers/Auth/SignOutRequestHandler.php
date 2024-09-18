@@ -1,5 +1,5 @@
 <?php
-namespace App\Handlers;
+namespace App\Handlers\Auth;
 
 use Amp\Http\Server\Request;
 use Amp\Http\Server\RequestHandler;

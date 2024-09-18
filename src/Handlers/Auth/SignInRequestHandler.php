@@ -1,5 +1,5 @@
 <?php
-namespace App\Handlers;
+namespace App\Handlers\Auth;
 
 use Amp\Http\Server\Request;
 use Amp\Http\Server\RequestHandler;
@@ -26,7 +26,7 @@ class SignInRequestHandler implements RequestHandler
         
         $user = AuthMiddleware::getRequestUser($request);
 
-        $html = renderPhp(__DIR__ . '/views/signIn.php', [
+        $html = renderPhp(__DIR__ . '/../views/signIn.php', [
             'providers' => $providers, 'user' => $user, 'request' => $request, 'pathPrefix' => $this->config->getUrlPathPrefix(),
         ]);
         
