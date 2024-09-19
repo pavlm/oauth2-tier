@@ -32,6 +32,11 @@ class StaticRequestHandler implements RequestHandler, LocationHandler
         }
     }
     
+    private function getIndexPage(): string
+    {
+        return $this->locationConfig->options['indexPage'] ?? 'index.html';
+    }
+    
     public function handleRequest(Request $request): Response
     {
         $path = $this->getInternalPath($request->getUri());
@@ -41,6 +46,12 @@ class StaticRequestHandler implements RequestHandler, LocationHandler
         $filePath = $this->locationConfig->target . '/' . ltrim($path, '/');
         if (!file_exists($filePath)) {
             throw new HttpErrorException(404);
+        }
+        if (is_dir($filePath)) {
+            $filePath = $filePath . '/' . $this->getIndexPage();
+            if (!is_file($filePath)) {
+                throw new HttpErrorException(403);
+            }
         }
         $ext = pathinfo($filePath, PATHINFO_EXTENSION);
         $mime = $this->mimes->getMimeType($ext) ?? 'appilcation/octet-stream';

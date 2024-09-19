@@ -8,6 +8,7 @@ use Amp\Http\Server\Response;
 use Amp\Http\Server\ErrorHandler;
 use Amp\Http\Server\HttpErrorException;
 use Psr\Log\LoggerInterface;
+use Amp\Http\HttpStatus;
 
 /**
  * Error page with exception message
@@ -25,7 +26,8 @@ class ExceptionHandlerMiddleware implements Middleware
             $response = $requestHandler->handleRequest($request);
             return $response;
         } catch (HttpErrorException $e) {
-            return $this->errorHandler->handleError($e->getStatus(), sprintf("%s", $e->getMessage()));
+            $message = sprintf("%s, %s", HttpStatus::getReason($e->getStatus()), $e->getMessage());
+            return $this->errorHandler->handleError($e->getStatus(), $message);
         } catch (\Exception $e) {
             $this->logServerError($request, $e);
             return $this->errorHandler->handleError(500, sprintf("#%d %s", $e->getCode(), $e->getMessage()));
