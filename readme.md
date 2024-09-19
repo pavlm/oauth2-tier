@@ -1,7 +1,7 @@
 oauth2-tier
 ===
 
-Proxy server for secure access to http backend, with authorization on external OAuth2 servers. 
+Proxy server for secure access to http backend or some contents, with authorization on external OAuth2 servers. 
 It's similar to oauth2-proxy project.
 
 ## Features
@@ -10,8 +10,14 @@ It's similar to oauth2-proxy project.
 * Doesn't require provider to support OIDC as in oauth2-proxy. User email field can be specified in provider configuration.
 * Uses Amphp v3 asynchronous framework, so quite performant.
 * Configuration via env file.
-* File system directory can be exposed via http, otherwise requests go to upstream.
-* File browser has also file viewer panel.
+
+* Multiple backend handlers can be configured at the same time:
+    * Http upstream server
+    * Server file browser with directory navigation and file viewer.
+    * Http file server
+    * PHP runner backend
+
+* Access control is configurable.
 * Some well known providers are available (only three for now).
 * Typical OAuth provider may be configured without coding.
 * Multiple host names can be used when it works behind trusted proxy.
@@ -26,8 +32,14 @@ OA2T_HTTP_PORT=8089                           # external http port of container
 OA2T_HTTP_ADDRESS=0.0.0.0:${OA2T_HTTP_PORT}   # server socket bind address
 OA2T_HTTP_ROOT_URL=http://192.168.1.10:8089/  # url with default hostname. Url path can also be specified. So all urls will be mounted to that path.
 OA2T_POST_LOGIN_URL=                          # if empty then url dynamically detected
-OA2T_UPSTREAM=http://192.168.1.10:8088/       # secured http backend (excludes OA2T_INDEX_DIRECTORY)
-OA2T_INDEX_DIRECTORY=                         # instead of http backend a file system dir can be exposed (excludes OA2T_UPSTREAM)
+
+# multiple backend types can be configured
+#OA2T_LOCATIONS='[["/", "proxy", "http://172.17.0.1:80"]]'  # secured http backend
+#OA2T_LOCATIONS='[["/", "browser", "/app"]]'                # server file browser backend. directory navigation and file viewer.
+#OA2T_LOCATIONS='[["/", "statics", "/app"]]'                # http file server backend
+#OA2T_LOCATIONS='[["/index.php", "php", "/index.php"]]'     # php runner backend
+
+OA2T_ACCESS_CONTROL='{"/": true}'             # access control rules. by default authorization is required, but some locations can be configured for public access
 OA2T_EMAIL_DOMAINS=*                          # allowed user email domains, comma separated values
 OA2T_COOKIE_SECURE=false                      # cookie secure flag 
 OA2T_COOKIE_EXPIRE=PT33H                      # cookie and session duration, in PHP DateInterval format
@@ -113,4 +125,4 @@ Following url endpoints are available.
 /oauth2/callback/{provider}    # OAuth2 redirect page. For google it will be https://<your-host>/oauth2/callback/google
 /ping                          # Health check page. Prints 'pong'.
 ```
-All other urls are proxied to http backend or to a file browser depending on config.
+All other urls are handled by configured backends.
