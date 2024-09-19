@@ -11,19 +11,32 @@ use Psr\Log\LoggerInterface;
 use Amp\Http\Server\HttpErrorException;
 use League\Uri\BaseUri;
 use App\Config\Config;
+use FastRoute\Dispatcher;
 
 class AuthMiddleware implements Middleware
 {
     
     public const IDENTITY_ATTRIBUTE = 'identity';
     
-    const PUBLIC_PATH = '#^(/ping|/oauth2/.*)$#';
-    
     private $pathPrefix = '';
+    
+    private ?Dispatcher $accessDispatcher = null;
     
     public function __construct(private LoggerInterface $logger, private Config $config)
     {
         $this->pathPrefix = $this->config->getUrlPathPrefix();
+        $rules = $this->config->getAccessControlRules();
+        if (empty($rules)) {
+            throw new \Exception('No access control rules configured.');
+        }
+        $this->accessDispatcher = \FastRoute\simpleDispatcher(function (\FastRoute\RouteCollector $rc) {
+            $rc->addRoute('*', $this->pathPrefix . '/oauth2/{tail:.*}', false);
+            $rc->addRoute('*', $this->pathPrefix . '/ping', false);
+            $rc->addRoute('*', '/oauth2/callback/{tail:.*}', false);
+            foreach ($this->config->getAccessControlRules() as $rule) {
+                $rc->addRoute('*', $this->pathPrefix . $rule->location . '{tail:.*}', $rule->auth);
+            }
+        });
     }
     
     public function handleRequest(Request $request, RequestHandler $requestHandler): Response
@@ -41,14 +54,14 @@ class AuthMiddleware implements Middleware
         
         if (!$identity) {
             $path = $request->getUri()->getPath();
-            if (0 === strpos($path, $this->pathPrefix)) {
-                $path = substr($path, strlen($this->pathPrefix)); // ignore prefix
-            }
-            if (!preg_match(self::PUBLIC_PATH, $path)) {
+            [$result, $checkAccess] = $this->accessDispatcher->dispatch($request->getMethod(), $path);
+            $notAuthorized = $result !== Dispatcher::FOUND;
+            $notAuthorized |= $result == Dispatcher::FOUND && $checkAccess;
+            if ($notAuthorized) {
                 $root = BaseUri::from($request->getUri())->origin();
                 $redirectUrl = '/' . $root->relativize($request->getUri())->getUriString();
                 $link = sprintf('<a href="%s/oauth2/sign_in?redirect_url=%s">Login</a>', $this->pathPrefix, urlencode($redirectUrl));
-                throw new HttpErrorException(401, 'Not authorized. ' . $link);
+                throw new HttpErrorException(401, $link);
             }
         }
         

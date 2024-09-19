@@ -71,7 +71,7 @@ class Application
             new AccessLoggerMiddleware(new WritableResourceStream(fopen($this->config->accessLog, 'a'))),
             new ExceptionHandlerMiddleware($errorHandler, $logger),
             new SessionMiddleware(factory: $this->container->get(SessionFactory::class), cookieAttributes: $cookieAttributes),
-            //new AuthMiddleware($logger, $this->config),
+            new AuthMiddleware($logger, $this->config),
         ];
         array_map($router->addMiddleware(...), $middlewares);
         $pathPrefix = $this->config->getUrlPathPrefix();
