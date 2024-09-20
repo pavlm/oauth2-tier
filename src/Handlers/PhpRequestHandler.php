@@ -35,9 +35,11 @@ class PhpRequestHandler implements RequestHandler, LocationHandler
     
     public function handleRequest(Request $request): Response
     {
+        $response = new Response(headers: ['content-type' => 'text/html; charset=utf-8']);
         if (!$this->dirTarget) {
-            $body = renderPhp($this->locationConfig->target);
-            return new Response(200, [], $body);
+            $body = renderPhp($this->locationConfig->target, ['request' => $request, 'response' => $response]);
+            $response->setBody($body);
+            return $response;
         }
     
         $path = $this->getInternalPath($request->getUri());
@@ -52,8 +54,9 @@ class PhpRequestHandler implements RequestHandler, LocationHandler
         if ($ext !== 'php') {
             throw new HttpErrorException(403);
         }
-        $body = renderPhp($filePath);
-        return new Response(200, [], $body);
+        $body = renderPhp($filePath, ['request' => $request, 'response' => $response]);
+        $response->setBody($body);
+        return $response;
     }
 
 }

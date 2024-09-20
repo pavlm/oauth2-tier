@@ -10,13 +10,11 @@ It's similar to oauth2-proxy project.
 * Doesn't require provider to support OIDC as in oauth2-proxy. User email field can be specified in provider configuration.
 * Uses Amphp v3 asynchronous framework, so quite performant.
 * Configuration via env file.
-
 * Multiple backend handlers can be configured at the same time:
     * Http upstream server
     * Server file browser with directory navigation and file viewer.
     * Http file server
     * PHP runner backend
-
 * Access control is configurable.
 * Some well known providers are available (only three for now).
 * Typical OAuth provider may be configured without coding.

@@ -23,3 +23,5 @@ logs:
 
 reup: down up
 
+restart:
+	@cd docker; docker compose restart

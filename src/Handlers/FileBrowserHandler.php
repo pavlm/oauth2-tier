@@ -42,7 +42,7 @@ class FileBrowserHandler implements RequestHandler, LocationHandler
 
         $html = renderPhp(__DIR__ . '/views/fileBrowser.php', ['browser' => $browser, 'pathPrefix' => $pathPrefix, 'basePathPrefix' => $this->config->getUrlPathPrefix()]);
 
-        return new Response(body: $html);
+        return new Response(body: $html, headers: ['content-type' => 'text/html; charset=utf-8']);
     }
     
 }
