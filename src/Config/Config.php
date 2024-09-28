@@ -72,6 +72,17 @@ class Config
         return preg_split('#[\s;,]+#', $this->emailDomains);
     }
     
+    public function getEmailsAllowed(): array
+    {
+        if (is_array($this->emailsAllowed)) {
+            return $this->emailsAllowed;
+        }
+        if ($this->emailsAllowed == '*') {
+            return [];
+        }
+        return preg_split('#[\s;,]+#', $this->emailsAllowed) ?: [];
+    }
+    
     public function getCookieExpireTime(): \DateTimeInterface
     {
         $now = new \DateTimeImmutable();

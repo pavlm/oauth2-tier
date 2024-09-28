@@ -33,16 +33,14 @@ class CallbackRequestHandler implements RequestHandler
         $provider = $this->registry->getByNameForRequest($providerId, $request);
         $code = $request->getQueryParameter('code');
         $token = $provider->exchangeAccessTokenForCode($code);
-        $this->logger->info(
-            'oauth token: {token}', ['token' => $token]);
+        $this->logger->info('oauth token: ' . $token);
         
         $identity = $provider->getIdentity($token);
         $idd = IdentityData::convert($identity);
         
-        $this->access->checkUserAllowed($identity);
+        $this->access->checkUserAllowed($idd);
         
         AuthMiddleware::loginUser($request, $idd);
-        $this->logger->info('oauth identity data: {id}', ['id' => var_export($idd, true)]);
         
         // select redirect url
         $redirectUrl = $this->config->postLoginUrl;

@@ -49,7 +49,9 @@ class AuthMiddleware implements Middleware
         if ($session->getId() && !$session->isEmpty()) {
             $identity = $session->get(self::IDENTITY_ATTRIBUTE);
             $request->setAttribute(self::IDENTITY_ATTRIBUTE, $identity);
-            $this->logger->info(json_encode(['identity' => print_r($identity, true)]));
+            if ($identity) {
+                $this->logger->info(json_encode(['identity' => $identity]));
+            }
         }
         
         if (!$identity) {

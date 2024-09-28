@@ -45,7 +45,7 @@ use Amp\Http\Server\Request;
             <h1>User info</h1>
             <form action="<?= $pathPrefix ?>/oauth2/sign_out" method="post" class="d-flex logout">
             	<div class="mr-3">
-            	    👤 <?= $user->getName() ?: $user->getEmail() ?: $user->getId() ?>
+            	    👤 <?= $user->name ?: $user->email ?: $user->id ?>
             	</div>
             	<button type="submit">logout</button>
             </form>

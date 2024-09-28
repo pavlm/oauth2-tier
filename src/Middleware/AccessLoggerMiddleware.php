@@ -45,7 +45,7 @@ final class AccessLoggerMiddleware implements Middleware
             $record[$field] = match ($field) {
                 'time' => $time->format(\DateTime::ISO8601),
                 'ip' => $clientIp,
-                'user' => $user ? ($user->getEmail() ?: $user->getName()) : null,
+                'user' => $user ? ($user->email ?: $user->name) : null,
                 'method' => $request->getMethod(),
                 'uri' => (string)$request->getUri(),
                 'protocolVersion' => $request->getProtocolVersion(),
