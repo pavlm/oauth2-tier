@@ -6,7 +6,7 @@ It's similar to oauth2-proxy project.
 
 ## Features
 
-* Several OAuth providers simultaneously can be used.
+* Several OAuth2 providers simultaneously can be used.
 * Doesn't require provider to support OIDC as in oauth2-proxy. User email field can be specified in provider configuration.
 * Uses Amphp v3 asynchronous framework, so quite performant.
 * Configuration via env file.
@@ -16,8 +16,9 @@ It's similar to oauth2-proxy project.
     * Http file server
     * PHP runner backend
 * Access control is configurable.
-* Some well known providers are available (only three for now).
-* Typical OAuth provider may be configured without coding.
+* Some well known OAuth2 providers are available:
+    * Google, Yandex, Keycloak, Github
+* Typical OAuth2 provider may be configured without coding.
 * Multiple host names can be used when it works behind trusted proxy.
 
 ## Configuration
