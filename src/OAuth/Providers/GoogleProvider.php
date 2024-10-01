@@ -3,6 +3,7 @@ namespace App\OAuth\Providers;
 
 use Amp\Http\Client\HttpClient;
 use App\OAuth\IdentityLoader;
+use Psr\Log\LoggerInterface;
 
 class GoogleProvider extends GenericProvider
 {
@@ -15,23 +16,25 @@ class GoogleProvider extends GenericProvider
         HttpClient $httpClient,
         string $clientId,
         string $clientSecret,
-        protected IdentityLoader $loader = new IdentityLoader('/sub', '/name', '/picture', '/email'),
+        IdentityLoader $loader = new IdentityLoader('/sub', '/name', '/picture', '/email'),
         array $scopes = ['email', 'openid', 'profile'],
-        protected string $id = 'google',
-        protected string $name = 'Google',
+        string $id = 'google',
+        string $name = 'Google',
+        ?LoggerInterface $logger = null,
     ) {
         parent::__construct(
-            $httpClient,
-            '/oauth2/callback/' . $id,
-            $this->authorizationUrl,
-            $this->accessTokenUrl,
-            $this->userInfoUrl,
-            $clientId,
-            $clientSecret,
-            $loader,
-            $scopes,
-            $id,
-            $name,
+            httpClient:       $httpClient,
+            redirectUri:      '/oauth2/callback/' . $id,
+            authorizationUrl: $this->authorizationUrl,
+            accessTokenUrl:   $this->accessTokenUrl,
+            userInfoUrl:      $this->userInfoUrl,
+            clientId:         $clientId,
+            clientSecret:     $clientSecret,
+            loader:           $loader,
+            scopes:           $scopes,
+            id:               $id,
+            name:             $name,
+            logger:           $logger,
         );
     }
 

@@ -14,6 +14,7 @@ services:
             $httpClient: '@Amp\Http\Client\HttpClient'
             $clientId: '%env(default:empty:OA2T_PROVIDERS_GOOGLE_CLIENT_ID)%'
             $clientSecret: '%env(default:empty:OA2T_PROVIDERS_GOOGLE_CLIENT_SECRET)%'
+            $logger: '@logger'
 
     keycloak:
         class: App\OAuth\Providers\KeycloakProvider
@@ -23,6 +24,7 @@ services:
             $clientId: '%env(default:empty:OA2T_PROVIDERS_KEYCLOAK_CLIENT_ID)%'
             $clientSecret: '%env(default:empty:OA2T_PROVIDERS_KEYCLOAK_CLIENT_SECRET)%'
             $scopes: '%env(json:default:scopes:OA2T_PROVIDERS_KEYCLOAK_SCOPES)%'
+            $logger: '@logger'
 
     yandex:
         class: App\OAuth\Providers\YandexProvider
@@ -30,4 +32,13 @@ services:
             $httpClient: '@Amp\Http\Client\HttpClient'
             $clientId: '%env(default:empty:OA2T_PROVIDERS_YANDEX_CLIENT_ID)%'
             $clientSecret: '%env(default:empty:OA2T_PROVIDERS_YANDEX_CLIENT_SECRET)%'
+            $logger: '@logger'
+
+    github:
+        class: App\OAuth\Providers\GithubProvider
+        arguments:
+            $httpClient: '@Amp\Http\Client\HttpClient'
+            $clientId: '%env(default:empty:OA2T_PROVIDERS_GITHUB_CLIENT_ID)%'
+            $clientSecret: '%env(default:empty:OA2T_PROVIDERS_GITHUB_CLIENT_SECRET)%'
+            $logger: '@logger'
 

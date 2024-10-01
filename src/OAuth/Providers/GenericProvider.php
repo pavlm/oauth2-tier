@@ -7,6 +7,7 @@ use Amp\Http\Client\HttpClient;
 use App\OAuth\IdentityLoader;
 use Amp\Http\Client\Request;
 use Amp\Http\Client\HttpException;
+use Psr\Log\LoggerInterface;
 
 class GenericProvider extends Provider
 {
@@ -21,8 +22,10 @@ class GenericProvider extends Provider
         protected string $clientSecret,
         protected IdentityLoader $loader,
         array $scopes = [],
+        protected string $userInfoMethod = 'POST',
         protected string $id = 'generic',
         protected string $name = 'Generic',
+        protected ?LoggerInterface $logger = null,
     ) {
         parent::__construct($httpClient, $redirectUri, $clientId, $clientSecret, \implode(' ', $scopes));
     }
@@ -39,11 +42,14 @@ class GenericProvider extends Provider
 
     public function getIdentity(string $accessToken): Identity
     {
-        $request = new Request($this->userInfoUrl, "POST", '');
+        $request = new Request($this->userInfoUrl, $this->userInfoMethod, '');
         $request->setHeaders(['authorization' => 'Bearer ' . $accessToken]);
         $response = $this->httpClient->request($request);
         
         if ($response->getStatus() !== 200) {
+            $this->logger?->error("user info query failure: {response}", [
+                'response' => ['status' => $response->getStatus(), 'headers' => $response->getHeaders(), 'body' => $response->getBody()->buffer()],
+            ]);
             throw new HttpException('user info query failure (' . $response->getStatus() . ')');
         }
         

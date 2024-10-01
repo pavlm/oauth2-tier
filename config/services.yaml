@@ -74,7 +74,6 @@ services:
         class: Amp\Http\Client\HttpClientBuilder
         calls:
           - retry: !returns_clone [0]
-          - skipDefaultUserAgent: !returns_clone []
           - usingPool: !returns_clone ['@proxy_connection_limit_pool']
 
     proxy_connection_limit_pool:
