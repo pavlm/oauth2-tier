@@ -26,6 +26,7 @@ class GenericProvider extends Provider
         protected string $id = 'generic',
         protected string $name = 'Generic',
         protected ?LoggerInterface $logger = null,
+        protected bool $debug = false,
     ) {
         parent::__construct($httpClient, $redirectUri, $clientId, $clientSecret, \implode(' ', $scopes));
     }
@@ -54,6 +55,11 @@ class GenericProvider extends Provider
         }
         
         $rawResponse = $response->getBody()->buffer();
+        if ($this->debug) {
+            $this->logger?->debug('provider response: {response}', [
+                'response' => ['status' => $response->getStatus(), 'headers' => $response->getHeaders(), 'body' => $rawResponse],
+            ]);
+        }
         $response = \json_decode($rawResponse, true);
         
         $identity = $this->loader->create($this, $response);

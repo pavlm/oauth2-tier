@@ -18,6 +18,7 @@ class KeycloakProvider extends GenericProvider
         string $id = 'keycloak',
         string $name = 'Keycloak',
         ?LoggerInterface $logger = null,
+        bool $debug = false,
     ) {
         parent::__construct(
             httpClient:       $httpClient, 
@@ -32,6 +33,7 @@ class KeycloakProvider extends GenericProvider
             id:               $id,
             name:             $name,
             logger:           $logger,
+            debug:            $debug,
         );
     }
     

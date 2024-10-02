@@ -17,10 +17,11 @@ class GithubProvider extends GenericProvider
         string $clientId,
         string $clientSecret,
         IdentityLoader $loader = new IdentityLoader('/id', '/login', '/avatar_url', '/email'),
-        array $scopes = ['user'],
+        array $scopes = ['read:user', 'user:email'],
         string $id = 'github',
         string $name = 'Github',
         ?LoggerInterface $logger = null,
+        bool $debug = false,
     ) {
         parent::__construct(
             httpClient:       $httpClient, 
@@ -36,6 +37,7 @@ class GithubProvider extends GenericProvider
             id:               $id,
             name:             $name,
             logger:           $logger,
+            debug:            $debug,
         );
     }
 
