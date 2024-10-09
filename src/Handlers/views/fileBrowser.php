@@ -32,6 +32,9 @@ $text = htmlspecialchars(...);
         left: 0.5em;
         text-decoration: none;
     }
+    code > span:first-child {
+        white-space: normal;
+    }
     </style>
 </head>
 <body class="h-100">
@@ -88,7 +91,13 @@ $text = htmlspecialchars(...);
             <?php if ($browser->fileError): ?>
             <div class="error"><?= $text($browser->fileError->getMessage()) ?></div>
             <?php else: ?>
-            <textarea style="width: 100%; flex-grow: 1" rows=30><?= $text($browser->fileContent) ?></textarea>
+<pre style="width: 100%; flex-grow: 1; overflow: scroll; margin: 0; background-color: #fff">
+<?php 
+print ($browser->targetFile->getExtension() == 'php') ? 
+    highlight_string($browser->fileContent, true) ?: $text($browser->fileContent) :
+    $text($browser->fileContent);
+?>
+</pre>
             <?php endif; ?>
             <?php endif; ?>
         </div>
